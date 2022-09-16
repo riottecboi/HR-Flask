@@ -52,7 +52,7 @@ class UserAuthentication(Base):
 
 class User(Base):
     __tablename__ = 'user'
-    id = Column(Integer, autoincrement=True, index=True)
+    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
     firstname = Column(String(255))
     lastname = Column(String(255))
     age = Column(Integer)
@@ -67,7 +67,7 @@ class User(Base):
 class Leave(Base):
     __tablename__ = 'leave'
     id = Column(Integer, autoincrement=True, index=True)
-    userid = Column(Integer, index=True)
+    userid = Column(Integer, primary_key=True, index=True)
     firstname = Column(String(255))
     lastname = Column(String(255))
     description = Column(Text)
@@ -77,7 +77,7 @@ class Leave(Base):
 class Payroll(Base):
     __tablename__ = 'payroll'
     id = Column(Integer, autoincrement=True, index=True)
-    userid = Column(Integer, index=True)
+    userid = Column(Integer, primary_key=True, index=True)
     firstname = Column(String(255))
     lastname = Column(String(255))
     basicSalary = Column(Float)
