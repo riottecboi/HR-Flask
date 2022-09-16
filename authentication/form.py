@@ -21,6 +21,9 @@ class CreateAccountForm(FlaskForm):
     email = EmailField('Email',
                       id='email_create',
                       validators=[DataRequired(), Email()])
+    confirm = PasswordField('Confirm Password',
+                             id='pwd_confirm',
+                             validators=[DataRequired()])
     password = PasswordField('Password',
                              id='pwd_create',
                              validators=[DataRequired()])

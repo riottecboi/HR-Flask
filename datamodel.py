@@ -8,8 +8,8 @@ from hashlib import sha512, sha224, sha256
 Base = declarative_base()
 class UserAuthentication(Base):
     __tablename__ = 'authentication'
-    id = Column(Integer, autoincrement=True, index=True)
-    username = Column(String(255), primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
+    username = Column(String(255))
     password = Column(String(255))
     password_salt = Column(String(255))
     authenticated = Column(Boolean, default=False)
@@ -53,6 +53,7 @@ class UserAuthentication(Base):
 class User(Base):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
+    userid = Column(Integer, index=True)
     firstname = Column(String(255))
     lastname = Column(String(255))
     age = Column(Integer)
@@ -66,8 +67,8 @@ class User(Base):
 
 class Leave(Base):
     __tablename__ = 'leave'
-    id = Column(Integer, autoincrement=True, index=True)
-    userid = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
+    userid = Column(Integer, index=True)
     firstname = Column(String(255))
     lastname = Column(String(255))
     description = Column(Text)
@@ -76,8 +77,8 @@ class Leave(Base):
 
 class Payroll(Base):
     __tablename__ = 'payroll'
-    id = Column(Integer, autoincrement=True, index=True)
-    userid = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
+    userid = Column(Integer, index=True)
     firstname = Column(String(255))
     lastname = Column(String(255))
     basicSalary = Column(Float)
