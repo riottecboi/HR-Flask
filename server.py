@@ -37,7 +37,7 @@ Base.metadata.create_all(engine)
 @login.user_loader
 def user_loader(username):
     session = sessionFactory()
-    user = session.query(User).filter_by(username=username).first()
+    user = session.query(UserAuthentication).filter_by(username=username).first()
     session.close()
     if user.deleted is True:
         return None
@@ -52,12 +52,6 @@ def unauthorized():
 def index():
     return redirect(url_for('login'))
 
-@app.route('/logout')
-def logout():
-    logout_user()
-    resp = make_response(render_template('logout.html'))
-    session.clear()
-    return resp
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -65,16 +59,16 @@ def login():
     sigupform = CreateAccountForm()
     session = sessionFactory()
     if loginform.validate_on_submit():
-        user = session.query(User).filter_by(username=loginform.username.data).first()
+        user = session.query(UserAuthentication).filter_by(username=loginform.username.data).first()
         if user:
             if user.check_password(loginform.password.data) and user.deleted is False:
                 user.set_authenticated(session, True)
                 login_user(user)
                 session.close()
-                return redirect('https://google.com')
+                return redirect(url_for('menu'))
         session.close()
         flash("Incorrect username/password", "error")
-        return render_template('error.html', message="Authentication error", redirect="/")
+        return render_template('login.html', loginform=loginform, sigupform=sigupform)
     session.close()
     return render_template("login.html", loginform=loginform, sigupform=sigupform)
 
@@ -99,10 +93,24 @@ def signup():
             session.commit()
             session.close()
             flash("Create user successful", "info")
-            return redirect('https://google.com')
+            return redirect(url_for('menu'))
     except Exception as e:
         flash("Could not sign up for new user", "error")
         return render_template('login.html', loginform=loginform, sigupform=sigupform)
+
+@app.route("/menu", methods=["GET", "POST"])
+@login_required
+def menu():
+    admin = current_user.is_admin
+    userType = 'User'
+    if admin is True:
+        userType = 'Administrator'
+    return render_template('dashboard.html', user= current_user.username, userType=userType)
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('menu'))
 
 if __name__ == '__main__':
     app.run()
