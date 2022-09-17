@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="{{url_for('static', filename='css/dashboard.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/modal.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/style.css')}}" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+
+  </head>
+  <body>
+    <div class='dashboard'>
+      <div class="dashboard-nav">
+        <header>
+          <a href="#!" class="menu-toggle">
+            <i class="fas fa-bars"></i>
+          </a>
+          <a href="#" class="brand-logo">
+            <i class="fas fa-anchor"></i>
+            <span></span>
+          </a>
+        </header>
+        <nav class="dashboard-nav-list">
+          <a href="{{url_for('menu')}}" class="dashboard-nav-item">
+            <i class="fas fa-home"></i> Home </a>
+<!--          <a href="#" class="dashboard-nav-item">-->
+<!--            <i class="fas fa-file-upload"></i> Upload </a>-->
+<!--          <div class='dashboard-nav-dropdown'>-->
+<!--            <a href="#!" class="dashboard-nav-item dashboard-nav-dropdown-toggle">-->
+<!--              <i class="fas fa-photo-video"></i> Media </a>-->
+<!--            <div class='dashboard-nav-dropdown-menu'>-->
+<!--              <a href="#" class="dashboard-nav-dropdown-item">All</a>-->
+<!--              <a href="#" class="dashboard-nav-dropdown-item">Recent</a>-->
+<!--              <a href="#" class="dashboard-nav-dropdown-item">Images</a>-->
+<!--              <a href="#" class="dashboard-nav-dropdown-item">Video</a>-->
+<!--            </div>-->
+<!--          </div>-->
+          <div class='dashboard-nav-dropdown'>
+            <a href="{{url_for('employee')}}" class="dashboard-nav-item active">
+              <i class="fas fa-users"></i> Employees </a>
+<!--            <div class='dashboard-nav-dropdown-menu'>-->
+<!--              <a href="#" class="dashboard-nav-dropdown-item">All</a>-->
+<!--              <a href="#" class="dashboard-nav-dropdown-item">Subscribed</a>-->
+<!--              <a href="#" class="dashboard-nav-dropdown-item">Non-subscribed</a>-->
+<!--              <a href="#" class="dashboard-nav-dropdown-item">Banned</a>-->
+<!--              <a href="#" class="dashboard-nav-dropdown-item">New</a>-->
+<!--            </div>-->
+          </div>
+          <div class='dashboard-nav-dropdown'>
+            <a href="#!" class="dashboard-nav-item dashboard-nav-dropdown-toggle">
+              <i class="fas fa-money-check-alt"></i> Payments </a>
+            <div class='dashboard-nav-dropdown-menu'>
+              <a href="#" class="dashboard-nav-dropdown-item">All</a>
+              <a href="#" class="dashboard-nav-dropdown-item">Recent</a>
+              <a href="#" class="dashboard-nav-dropdown-item"> Projections</a>
+            </div>
+          </div>
+          <a href="#" class="dashboard-nav-item">
+            <i class="fas fa-cogs"></i> Settings </a>
+          <a href="#" class="dashboard-nav-item">
+            <i class="fas fa-user"></i> Profile </a>
+          <div class="nav-item-divider"></div>
+          <a href="{{url_for('logout')}}" class="dashboard-nav-item">
+            <i class="fas fa-sign-out-alt"></i> Logout </a>
+        </nav>
+      </div>
+      <div class='dashboard-app'>
+        <header class='dashboard-toolbar'>
+          <a href="" class="menu-toggle">
+            <i class="fas fa-bars"></i>
+          </a>
+          <a href="{{url_for('employee')}}" class="menu-toggle">
+            <i class="fas fa-bars">Employees</i>
+          </a>
+        </header>
+        <div class='dashboard-content'>
+          <div class='container'>
+            {% for category, message in get_flashed_messages(with_categories=True) %}
+              <div class="alert alert-{{category}}">{{ message }}</div>
+            {% endfor %}
+            <script>
+                setTimeout(function() {
+                    $(".alert").fadeOut('fast');
+                }, 3000);
+            </script>
+            <div class='card'>
+              <div class='card-header' style="text-align: left">
+                <h3><b>Employee Console</b><button id="myBtn" class="btn btn-lg btn-primary btn-block btn-color-hover" style="float: right" type="button">ADD</button></h3>
+              </div>
+              <div class='card-body'>
+                <p>All employees are showing here</p>
+              </div>
+            </div>
+            <!-- The Modal -->
+            <div id="myModal" class="modal">
+
+              <!-- Modal content -->
+              <div class="modal-content" style="text-align: center">
+                <div class="modal-header">
+                  <span class="close">&times;</span>
+                  <h3 style="margin-top: 10px">Add new employee</h3>
+                </div>
+                <div class="modal-body">
+                  <form action="{{url_for('employee')}}" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <p><b>USER INFORMATION</b></p>
+                    <div class="form-label-group">
+                        {{ form.firstname(id="firstname", class_="form-control", placeholder="First Name") }}
+                        <label for="firstname">First Name</label>
+                    </div>
+
+                    <div class="form-label-group">
+                        {{ form.lastname(id="lastname", class_="form-control", placeholder="Last Name") }}
+                        <label for="lastname">Last Name</label>
+                    </div>
+                    <div class="form-label-group">
+                        {{ form.age(id="age", class_="form-control", placeholder="Age") }}
+                        <label for="age">Age</label>
+                    </div>
+
+                    <div class="form-label-group">
+                        {{ form.phone(id="phone", class_="form-control", placeholder="Phone") }}
+                        <label for="phone">Phone</label>
+                    </div>
+                    <div class="form-label-group">
+                        {{ form.email(id="email", class_="form-control", placeholder="Email", required=True) }}
+                        <label for="email">Email</label>
+                    </div>
+
+                    <div class="form-label-group">
+                        {{ form.position(id="position", class_="form-control", placeholder="Position") }}
+                        <label for="position">Position</label>
+                    </div>
+
+                    <div class="form-label-group">
+                        {{ form.department(id="department", class_="form-control", placeholder="Department") }}
+                        <label for="department">Department</label>
+                    </div>
+
+                    <div class="form-label-group">
+                        {{ form.location(id="location", class_="form-control", placeholder="Location") }}
+                        <label for="location">Location</label>
+                    </div>
+                    <div class="form-label-group">
+                        {{ form.skills(id="skill", class_="form-control", placeholder="Skills") }}
+                        <label for="skill">Skills</label>
+                    </div>
+                    <hr>
+                    <p><b>USER AUTHENTICATION</b></p>
+                    <div class="form-label-group">
+                        {{ form.username(id="username", class_="form-control", placeholder="Username", required=True) }}
+                        <label for="username">Username</label>
+                    </div>
+
+                    <div class="form-label-group">
+                        {{ form.password(id="password", class_="form-control", placeholder="Password", required=True) }}
+                        <label for="password">Password</label>
+                    </div>
+
+                    <div class="form-label-group">
+                        {{ form.confirm(id="confirm", class_="form-control", placeholder="Confirm Password", required=True) }}
+                        <label for="confirm">Confirm Password</label>
+                    </div>
+
+                    <button class="btn btn-lg btn-primary btn-block btn-color-hover"
+                            style="margin-bottom:50px;height: 50px;width: 200px;color: whitesmoke;" type="submit">Submit</button>
+                  </form>
+                </div>
+
+              </div>
+
+            </div>
+            <div style="overflow-x: auto;margin-top: 10px">
+              <table>
+                <tr>
+                  <th>ID</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Age</th>
+                  <th>Phone</th>
+                  <th>Email</th>
+                  <th>Position</th>
+                  <th>Department</th>
+                  <th>Location</th>
+                </tr>
+                {% for user in users %}
+                <tr>
+                  <td>{{user['id']}}</td>
+                  <td>{{user['firstname']}}</td>
+                  <td>{{user['lastname']}}</td>
+                  <td>{{user['age']}}</td>
+                  <td>{{user['phone']}}</td>
+                  <td>{{user['email']}}</td>
+                  <td>{{user['position']}}</td>
+                  <td>{{user['department']}}</td>
+                  <td>{{user['location']}}</td>
+                </tr>
+                {% endfor %}
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const mobileScreen = window.matchMedia("(max-width: 990px )");
+      $(document).ready(function() {
+        $(".dashboard-nav-dropdown-toggle").click(function() {
+          $(this).closest(".dashboard-nav-dropdown").toggleClass("show").find(".dashboard-nav-dropdown").removeClass("show");
+          $(this).parent().siblings().removeClass("show");
+        });
+        $(".menu-toggle").click(function() {
+          if (mobileScreen.matches) {
+            $(".dashboard-nav").toggleClass("mobile-show");
+          } else {
+            $(".dashboard").toggleClass("dashboard-compact");
+          }
+        });
+      });
+    </script>
+    <script>
+      // Get the modal
+      var modal = document.getElementById("myModal");
+
+      // Get the button that opens the modal
+      var btn = document.getElementById("myBtn");
+
+      // Get the <span> element that closes the modal
+      var span = document.getElementsByClassName("close")[0];
+
+      // When the user clicks the button, open the modal
+      btn.onclick = function() {
+        modal.style.display = "block";
+      }
+
+      // When the user clicks on <span> (x), close the modal
+      span.onclick = function() {
+        modal.style.display = "none";
+      }
+
+      // When the user clicks anywhere outside of the modal, close it
+      window.onclick = function(event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      }
+    </script>
+  </body>
+</html>

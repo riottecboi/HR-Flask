@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link href="{{url_for('static', filename='css/dashboard.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/modal.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/style.css')}}" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   </head>
   <body>
@@ -21,28 +24,28 @@
         <nav class="dashboard-nav-list">
           <a href="#" class="dashboard-nav-item active">
             <i class="fas fa-home"></i> Home </a>
-          <a href="#" class="dashboard-nav-item">
-            <i class="fas fa-file-upload"></i> Upload </a>
+<!--          <a href="#" class="dashboard-nav-item">-->
+<!--            <i class="fas fa-file-upload"></i> Upload </a>-->
+<!--          <div class='dashboard-nav-dropdown'>-->
+<!--            <a href="#!" class="dashboard-nav-item dashboard-nav-dropdown-toggle">-->
+<!--              <i class="fas fa-photo-video"></i> Media </a>-->
+<!--            <div class='dashboard-nav-dropdown-menu'>-->
+<!--              <a href="#" class="dashboard-nav-dropdown-item">All</a>-->
+<!--              <a href="#" class="dashboard-nav-dropdown-item">Recent</a>-->
+<!--              <a href="#" class="dashboard-nav-dropdown-item">Images</a>-->
+<!--              <a href="#" class="dashboard-nav-dropdown-item">Video</a>-->
+<!--            </div>-->
+<!--          </div>-->
           <div class='dashboard-nav-dropdown'>
-            <a href="#!" class="dashboard-nav-item dashboard-nav-dropdown-toggle">
-              <i class="fas fa-photo-video"></i> Media </a>
-            <div class='dashboard-nav-dropdown-menu'>
-              <a href="#" class="dashboard-nav-dropdown-item">All</a>
-              <a href="#" class="dashboard-nav-dropdown-item">Recent</a>
-              <a href="#" class="dashboard-nav-dropdown-item">Images</a>
-              <a href="#" class="dashboard-nav-dropdown-item">Video</a>
-            </div>
-          </div>
-          <div class='dashboard-nav-dropdown'>
-            <a href="#!" class="dashboard-nav-item dashboard-nav-dropdown-toggle">
-              <i class="fas fa-users"></i> Users </a>
-            <div class='dashboard-nav-dropdown-menu'>
-              <a href="#" class="dashboard-nav-dropdown-item">All</a>
-              <a href="#" class="dashboard-nav-dropdown-item">Subscribed</a>
-              <a href="#" class="dashboard-nav-dropdown-item">Non-subscribed</a>
-              <a href="#" class="dashboard-nav-dropdown-item">Banned</a>
-              <a href="#" class="dashboard-nav-dropdown-item">New</a>
-            </div>
+            <a href="{{url_for('employee')}}" class="dashboard-nav-item">
+              <i class="fas fa-users"></i> Employees </a>
+<!--            <div class='dashboard-nav-dropdown-menu'>-->
+<!--              <a href="#" class="dashboard-nav-dropdown-item">All</a>-->
+<!--              <a href="#" class="dashboard-nav-dropdown-item">Subscribed</a>-->
+<!--              <a href="#" class="dashboard-nav-dropdown-item">Non-subscribed</a>-->
+<!--              <a href="#" class="dashboard-nav-dropdown-item">Banned</a>-->
+<!--              <a href="#" class="dashboard-nav-dropdown-item">New</a>-->
+<!--            </div>-->
           </div>
           <div class='dashboard-nav-dropdown'>
             <a href="#!" class="dashboard-nav-item dashboard-nav-dropdown-toggle">
@@ -64,15 +67,26 @@
       </div>
       <div class='dashboard-app'>
         <header class='dashboard-toolbar'>
-          <a href="#!" class="menu-toggle">
+          <a href="" class="menu-toggle">
             <i class="fas fa-bars"></i>
+          </a>
+          <a href="{{url_for('menu')}}" class="menu-toggle">
+            <i class="fas fa-bars">Home</i>
           </a>
         </header>
         <div class='dashboard-content'>
           <div class='container'>
+            {% for category, message in get_flashed_messages(with_categories=True) %}
+              <div class="alert alert-{{category}}">{{ message }}</div>
+            {% endfor %}
+            <script>
+                setTimeout(function() {
+                    $(".alert").fadeOut('fast');
+                }, 3000);
+            </script>
             <div class='card'>
               <div class='card-header'>
-                <h1>Welcome back {{user}}</h1>
+                <h3>Welcome back {{user}}</h3>
               </div>
               <div class='card-body'>
                 <p>Your account type is: {{userType}}</p>

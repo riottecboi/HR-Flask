@@ -5,7 +5,6 @@
 */
 @import url("https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css");
 
-@import url('https://fonts.googleapis.com/css?family=Amatic+SC:400,700|Source+Sans+Pro:300,400,700');
 
 
 body{
@@ -44,12 +43,12 @@ table td,
 	transition: all 0.4s ease;
 }
 a {
-	color: #e52225;
+	color: #443ea2;
 	text-decoration: none;
 }
 a:hover, 
 a:focus {
-	color: #e52225;
+	color: #443ea2;
 	outline: none;
 	text-decoration: none;
 }
@@ -62,7 +61,7 @@ button:focus {
 	color: #0f0f0f;	
 }
 .link-dark:hover, .link-dark:focus {
-	color: #e52225;
+	color: #443ea2;
 	text-decoration: none;
 }
 @media screen and (-ms-high-contrast:active), (-ms-high-contrast:none) {
@@ -95,7 +94,7 @@ h6 {
 	font-weight: 700;
 	color: #0f0f0f;
 	text-transform: capitalize;
-	font-family: 'Amatic SC', cursive;
+	font-family: 'Source Sans Pro', sans-serif;
 }
 h1, 
 h2 {
@@ -168,7 +167,7 @@ h6 {
 	color: #ffffff;
 	background: #f2709c;
 	background: -webkit-linear-gradient(to right, #ff9472, #f2709c);
-	background: linear-gradient(to right, #ff9472, #f2709c);
+	background: linear-gradient(to right, #ff9472, #443ea2);
 	text-transform: uppercase;
 }
 .tab-bar-top .nav-tabs .nav-link.active{
@@ -280,7 +279,7 @@ h6 {
 	border: none;
 	background: #f2709c;
 	background: -webkit-linear-gradient(to right, #ff9472, #f2709c);
-	background: linear-gradient(to right, #ff9472, #f2709c);
+	background: linear-gradient(to right, #ff9472, #443ea2);
 }
 .btn-color-hover:hover{
 	background: #f2709c;

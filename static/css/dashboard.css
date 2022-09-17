@@ -132,6 +132,7 @@ h1, .h1 {
     -ms-flex-positive: 2;
     flex-grow: 2;
     padding: 25px;
+    background: white;
 }
 
 .dashboard-nav {
@@ -141,7 +142,7 @@ h1, .h1 {
     top: 0;
     bottom: 0;
     overflow: auto;
-    background-color: #373193;
+    background: linear-gradient(to right, #ff9472, #443ea2);
 }
 
 .dashboard-compact .dashboard-nav {
@@ -179,7 +180,7 @@ h1, .h1 {
 }
 
 .dashboard-nav {
-    background-color: #443ea2;
+    background: linear-gradient(to right, #ff9472, #443ea2);
 }
 
 .dashboard-nav a {
@@ -436,4 +437,30 @@ h1, .h1 {
         left: 0;
     }
 }
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
 
+th, td {
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {background-color: #f2f2f2;}
+
+.btn-block{
+	border-radius: 8px;
+}
+
+.btn-color-hover{
+	border: none;
+	background: #f2709c;
+	background: -webkit-linear-gradient(to right, #ff9472, #f2709c);
+	background: linear-gradient(to right, #ff9472, #443ea2);
+}
+.btn-color-hover:hover{
+	background: #f2709c;
+	background: -webkit-linear-gradient(to right, #f2709c, #ff9472);
+	background: linear-gradient(to right, #f2709c, #ff9472);
+}
