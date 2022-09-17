@@ -6,6 +6,6 @@ def get_all_user(session):
     if users is not None and len(users)!=0:
         for user in users:
             user_list.append({'id': user.id, 'firstname': user.firstname, 'lastname': user.lastname,
-                              'age': user.age, 'phone': user.phone, 'email': user.email, 'position': user.jobtitle,
+                              'age': user.age, 'phone': user.phone, 'email': user.email, 'position': user.jobtitle, 'skill': user.primaryskills,
                               'department': user.department, 'location': user.location})
     return user_list

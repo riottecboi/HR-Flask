@@ -102,9 +102,13 @@
                   <h3 style="margin-top: 10px">Add new employee</h3>
                 </div>
                 <div class="modal-body">
-                  <form action="{{url_for('employee')}}" method="post">
+                  <form action="{{url_for('employee')}}" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <p><b>USER INFORMATION</b></p>
+                    <div class="form-label-group">
+                        <input type="file" id="profile" name="profile">
+                        <label for="profile">Profile</label>
+                    </div>
                     <div class="form-label-group">
                         {{ form.firstname(id="firstname", class_="form-control", placeholder="First Name") }}
                         <label for="firstname">First Name</label>
@@ -146,6 +150,7 @@
                         {{ form.skills(id="skill", class_="form-control", placeholder="Skills") }}
                         <label for="skill">Skills</label>
                     </div>
+
                     <hr>
                     <p><b>USER AUTHENTICATION</b></p>
                     <div class="form-label-group">
@@ -181,20 +186,22 @@
                   <th>Phone</th>
                   <th>Email</th>
                   <th>Position</th>
+                  <th>Primary Skills</th>
                   <th>Department</th>
                   <th>Location</th>
                 </tr>
                 {% for user in users %}
                 <tr>
                   <td>{{user['id']}}</td>
-                  <td>{{user['firstname']}}</td>
-                  <td>{{user['lastname']}}</td>
-                  <td>{{user['age']}}</td>
-                  <td>{{user['phone']}}</td>
-                  <td>{{user['email']}}</td>
-                  <td>{{user['position']}}</td>
-                  <td>{{user['department']}}</td>
-                  <td>{{user['location']}}</td>
+                  <td>{% if user['firstname'] != None %}{{user['firstname']}}{% endif %}</td>
+                  <td>{% if user['lastname'] != None %}{{user['lastname']}}{% endif %}</td>
+                  <td>{% if user['age'] != None %}{{user['age']}}{% endif %}</td>
+                  <td>{% if user['phone'] != None %}{{user['phone']}}{% endif %}</td>
+                  <td>{% if user['email'] != None %}{{user['email']}}{% endif %}</td>
+                  <td>{% if user['position'] != None %}{{user['position']}}{% endif %}</td>
+                  <td>{% if user['skill'] != None %}{{user['skill']}}{% endif %}</td>
+                  <td>{% if user['department'] != None %}{{user['department']}}{% endif %}</td>
+                  <td>{% if user['location'] != None %}{{user['location']}}{% endif %}</td>
                 </tr>
                 {% endfor %}
               </table>
