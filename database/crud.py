@@ -7,6 +7,14 @@ def user_is_admin(session, userid):
     else:
         return False
 
+def get_user_by_id(session, id):
+    user = session.query(User).filter(User.id==id).one()
+    if user is not None:
+        userInfo = {'firstname': user.firstname, 'lastname': user.lastname}
+    else:
+        userInfo = {'firstname': '', 'lastname': ''}
+    return userInfo
+
 def get_all_user(session):
     user_list = []
     users = session.query(User).all()
@@ -40,7 +48,7 @@ def get_user_leave(session):
     if leaves is not None and len(leaves) != 0:
         for leave in leaves:
             leave_list.append({'id': leave.id, 'firstname': leave.firstname, 'lastname': leave.lastname,
-                                 'description': leave.description, 'startDate': leave.startDate, 'endDate': leave.endDate,
+                                 'description': leave.description, 'startDate': leave.startDate, 'endDate': leave.endDate, 'status': leave.status
                               })
     return leave_list
 
@@ -54,3 +62,12 @@ def get_payroll_by_user(session, id):
                              'overTime': payroll.overTime,
                              'totalPayRate': payroll.totalPayRate, 'payDate': payroll.payDate})
     return payroll_list
+
+def get_leave_form_history_by_user(session, id):
+    forms = []
+    leave_form = session.query(Leave).filter(Leave.userid==id).all()
+    if leave_form is not None and len(leave_form)!=0:
+        for leave in leave_form:
+            forms.append({'leave': leave.leavetype, 'description': leave.description, 'sdate': leave.startDate,
+                          'edate': leave.endDate, 'status': leave.status})
+    return forms

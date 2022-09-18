@@ -347,7 +347,16 @@ h6 {
   background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
 }
 
-
+.select_box {
+	width: 400px;
+    height: 50px;
+    border: 1px solid #ececec;
+    border-radius: 8px;
+    background: white;
+    padding-bottom: calc(var(--input-padding-y) / 3);
+    padding-left: 20px;
+	padding-right: 20px;
+}
 
 
 

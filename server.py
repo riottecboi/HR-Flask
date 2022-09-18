@@ -9,7 +9,7 @@ from sqlalchemy.orm import sessionmaker
 
 from database.crud import *
 from database.datamodel import *
-from authentication.form import LoginForm, CreateAccountForm, AddUser, PaySlip
+from authentication.form import LoginForm, CreateAccountForm, AddUser, PaySlip, SubmitLeaveForm, LeaveForm
 from datetime import datetime
 from functools import wraps
 
@@ -114,6 +114,8 @@ def signup():
             flash("Create user successful", "info")
             return redirect(url_for('menu'))
     except Exception as e:
+        session.rollback()
+        session.close()
         flash("Could not sign up for new user", "error")
         return render_template('login.html', loginform=loginform, sigupform=sigupform)
 
@@ -154,6 +156,8 @@ def editprofile():
             flash('Bad request', "error")
             return redirect(url_for('employee'))
     except Exception as e:
+        session.rollback()
+        session.close()
         flash("Exception occurred - Cannot edit user", "error")
         return redirect(url_for('employee'))
 
@@ -220,6 +224,7 @@ def employee():
         session.close()
         return render_template('employee.html', admin=current_user.is_admin, users=users, username=current_user.username, form=form)
     except Exception as e:
+        session.rollback()
         session.close()
         flash("Exception occurred - Cannot add new user", "error")
         return redirect(url_for('employee'))
@@ -252,8 +257,74 @@ def payroll():
         session.close()
         return render_template('payroll.html', admin=current_user.is_admin,  payrolls=payrolls, form=form)
     except Exception as e:
+        session.rollback()
         session.close()
         return redirect(url_for('menu'))
+
+@app.route('/submitform', methods=['POST'])
+def submitform():
+    session = sessionFactory()
+    try:
+        submitform = SubmitLeaveForm()
+        sdate = request.form.get('sdate')
+        sdatedb = datetime.strptime(sdate, '%Y-%m-%d')
+        edate = request.form.get('edate')
+        edatedb = datetime.strptime(edate, '%Y-%m-%d')
+        leavetype = submitform.type.data
+        description = submitform.description.data
+        userInfo = get_user_by_id(session, current_user.id)
+        leaveform = Leave(userid=current_user.id, firstname=userInfo['firstname'], lastname=userInfo['lastname'],
+                          leavetype=leavetype, description=description, startDate=sdatedb, endDate=edatedb, status='pending')
+        session.add(leaveform)
+        session.commit()
+        session.close()
+        flash('Added leave form successful', 'info')
+        return redirect(url_for('leave'))
+    except Exception as e:
+        session.rollback()
+        session.close()
+        flash('Could not add leave form', 'error')
+        return redirect(url_for('leave'))
+
+
+@app.route("/leave", methods=['GET'])
+@login_required
+def leave():
+    session = sessionFactory()
+    try:
+        if current_user.is_admin is False:
+            submitform = SubmitLeaveForm()
+            history = get_leave_form_history_by_user(session, current_user.id)
+            return render_template('leave.html', form=submitform, records=history)
+        else:
+            return redirect(url_for('leaves'))
+    except Exception as e:
+        session.rollback()
+        session.close()
+        flash('Could not retrieve page', 'error')
+        return redirect(url_for('menu'))
+
+@app.route("/leaves", methods=['GET', 'POST'])
+@login_required
+@admin_only
+def leaves():
+    form = LeaveForm()
+    session = sessionFactory()
+    if request.method == 'POST':
+        try:
+            leaveid = request.form.get('leaveid')
+            status = form.status.data
+            session.query(Leave).filter(Leave.id==leaveid).update({'status': status})
+            session.commit()
+            session.close()
+            flash('Updated form successful', "info")
+        except Exception as e:
+            session.rollback()
+            session.close()
+            flash('Could not update form', 'error')
+        return redirect(url_for('leaves'))
+    all_leaves = get_user_leave(session)
+    return render_template('leaves.html', form=form, leaves=all_leaves)
 
 
 @app.route("/menu", methods=["GET", "POST"])
