@@ -9,6 +9,37 @@
     <link href="{{url_for('static', filename='css/style.css')}}" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   </head>
+  <style>
+    //css cua nhu 
+    
+    .section-avatar{
+      margin-top: 40px ;
+    }
+    .content-avatar{
+      margin: 0px 30px;
+    }
+    .img-people{
+      width:100px;
+      height:100px;
+      border-radius:100px;
+      border: 1px solid black;
+      margin: 0 auto;
+      display: block;
+      margin-bottom: 16px;
+      object-fit : cover;
+    }
+
+    .infor-people{
+      text-align:center;
+      font-size: 16px;
+    }
+    .infor-people-name{
+      text-align:center;
+      font-size: 18px;
+      font-weight: 600;
+
+    }
+  </style>
   <body>
     <div class='dashboard'>
       <div class="dashboard-nav">
@@ -92,19 +123,194 @@
                 <p>Your account type is: {{userType}}</p>
               </div>
             </div>
+            <div class="section-avatar" style="margin-top:40px; display: flex;     justify-content: space-between;">
+              <div class="content-avatar">
+                <div class="detail-avatar">
+                  <img class="img-people" src="https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg" />
+                  <div class="infor-people-name">
+                    Sam Worthington
+                  </div>
+                  <div class="infor-people">
+                    Samuel Henry J. "Sam" Worthington là một diễn viên người Úc. Anh được biết đến với vai Jake Sully trong Avatar
+                  </div>
+                </div>
+              </div>
+              <div class="content-avatar">
+                <div class="detail-avatar">
+                  <img class="img-people" src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRRyYPpSOn_kpXBtE4wJ50MCIJ9J7bBAq8_swh03mb1kml7lGqF" />
+                  <div class="infor-people-name">
+                    Sam Worthington
+                  </div>
+                  <div class="infor-people">
+                    Samuel Henry J. "Sam" Worthington là một diễn viên người Úc. Anh được biết đến với vai Jake Sully trong Avatar
+                  </div>
+                </div>
+              </div>
+              <div class="content-avatar">
+                <div class="detail-avatar">
+                  <img class="img-people" src="https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg" />
+                  <div class="infor-people-name">
+                    Sam Worthington
+                  </div>
+                  <div class="infor-people">
+                    Samuel Henry J. "Sam" Worthington là một diễn viên người Úc. Anh được biết đến với vai Jake Sully trong Avatar
+                  </div>
+                </div>
+              </div>
+              <div class="content-avatar">
+                <div class="detail-avatar">
+                  <img class="img-people" src="https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg" />
+                  <div class="infor-people-name">
+                    Sam Worthington
+                  </div>
+                  <div class="infor-people">
+                    Samuel Henry J. "Sam" Worthington là một diễn viên người Úc. Anh được biết đến với vai Jake Sully trong Avatar
+                  </div>
+                </div>
+              </div>
+              <div class="content-avatar">
+                <div class="detail-avatar">
+                  <img class="img-people" src="https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg" />
+                  <div class="infor-people-name">
+                    Sam Worthington
+                  </div>
+                  <div class="infor-people">
+                    Samuel Henry J. "Sam" Worthington là một diễn viên người Úc. Anh được biết đến với vai Jake Sully trong Avatar
+                  </div>
+                </div>
+              </div>
+              <div class="content-avatar">
+                <div class="detail-avatar">
+                  <img class="img-people" src="https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg" />
+                  <div class="infor-people-name">
+                    Sam Worthington
+                  </div>
+                  <div class="infor-people">
+                    Samuel Henry J. "Sam" Worthington là một diễn viên người Úc. Anh được biết đến với vai Jake Sully trong Avatar
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <script>
-      const mobileScreen = window.matchMedia("(max-width: 990px )");
-      $(document).ready(function() {
-        $(".dashboard-nav-dropdown-toggle").click(function() {
-          $(this).closest(".dashboard-nav-dropdown").toggleClass("show").find(".dashboard-nav-dropdown").removeClass("show");
-          $(this).parent().siblings().removeClass("show");
-        });
-        $(".menu-toggle").click(function() {
-          if (mobileScreen.matches) {
+    <script><!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <title>Title</title>
+          <link href="{{url_for('static', filename='css/dashboard.css')}}" rel="stylesheet">
+          <link href="{{url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
+          <link href="{{url_for('static', filename='css/modal.css')}}" rel="stylesheet">
+          <link href="{{url_for('static', filename='css/style.css')}}" rel="stylesheet">
+          <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        </head>
+        <body>
+          <div class='dashboard'>
+            <div class="dashboard-nav">
+              <header>
+                <a href="#!" class="menu-toggle">
+                  <i class="fas fa-bars"></i>
+                </a>
+                <a href="#" class="brand-logo">
+                  <i class="fas fa-anchor"></i>
+                  <span>BRAND</span>
+                </a>
+              </header>
+              <nav class="dashboard-nav-list">
+                <a href="#" class="dashboard-nav-item active">
+                  <i class="fas fa-home"></i> Home </a>
+      <!--          <a href="#" class="dashboard-nav-item">-->
+      <!--            <i class="fas fa-file-upload"></i> Upload </a>-->
+      <!--          <div class='dashboard-nav-dropdown'>-->
+      <!--            <a href="#!" class="dashboard-nav-item dashboard-nav-dropdown-toggle">-->
+      <!--              <i class="fas fa-photo-video"></i> Media </a>-->
+      <!--            <div class='dashboard-nav-dropdown-menu'>-->
+      <!--              <a href="#" class="dashboard-nav-dropdown-item">All</a>-->
+      <!--              <a href="#" class="dashboard-nav-dropdown-item">Recent</a>-->
+      <!--              <a href="#" class="dashboard-nav-dropdown-item">Images</a>-->
+      <!--              <a href="#" class="dashboard-nav-dropdown-item">Video</a>-->
+      <!--            </div>-->
+      <!--          </div>-->
+                <div class='dashboard-nav-dropdown'>
+                  <a href="{{url_for('employee')}}" class="dashboard-nav-item">
+                    <i class="fas fa-users"></i> Employees </a>
+      <!--            <div class='dashboard-nav-dropdown-menu'>-->
+      <!--              <a href="#" class="dashboard-nav-dropdown-item">All</a>-->
+      <!--              <a href="#" class="dashboard-nav-dropdown-item">Subscribed</a>-->
+      <!--              <a href="#" class="dashboard-nav-dropdown-item">Non-subscribed</a>-->
+      <!--              <a href="#" class="dashboard-nav-dropdown-item">Banned</a>-->
+      <!--              <a href="#" class="dashboard-nav-dropdown-item">New</a>-->
+      <!--            </div>-->
+                </div>
+                <div class='dashboard-nav-dropdown'>
+                  <a href="#!" class="dashboard-nav-item dashboard-nav-dropdown-toggle">
+                    <i class="fas fa-money-check-alt"></i> Payments </a>
+                  <div class='dashboard-nav-dropdown-menu'>
+                    <a href="#" class="dashboard-nav-dropdown-item">All</a>
+                    <a href="#" class="dashboard-nav-dropdown-item">Recent</a>
+                    <a href="#" class="dashboard-nav-dropdown-item"> Projections</a>
+                  </div>
+                </div>
+                <a href="#" class="dashboard-nav-item">
+                  <i class="fas fa-cogs"></i> Settings </a>
+                <a href="#" class="dashboard-nav-item">
+                  <i class="fas fa-user"></i> Profile </a>
+                <div class="nav-item-divider"></div>
+                <a href="{{url_for('logout')}}" class="dashboard-nav-item">
+                  <i class="fas fa-sign-out-alt"></i> Logout </a>
+              </nav>
+            </div>
+            <div class='dashboard-app'>
+              <header class='dashboard-toolbar'>
+                <a href="" class="menu-toggle">
+                  <i class="fas fa-bars"></i>
+                </a>
+                <a href="{{url_for('menu')}}" class="menu-toggle">
+                  <i class="fas fa-bars">Home</i>
+                </a>
+              </header>
+              <div class='dashboard-content'>
+                <div class='container'>
+                  {% for category, message in get_flashed_messages(with_categories=True) %}
+                    <div class="alert alert-{{category}}">{{ message }}</div>
+                  {% endfor %}
+                  <script>
+                      setTimeout(function() {
+                          $(".alert").fadeOut('fast');
+                      }, 3000);
+                  </script>
+                  <div class='card'>
+                    <div class='card-header'>
+                      <h3>Welcome back {{user}}</h3>
+                    </div>
+                    <div class='card-body'>
+                      <p>Your account type is: {{userType}}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <script>
+            const mobileScreen = window.matchMedia("(max-width: 990px )");
+            $(document).ready(function() {
+              $(".dashboard-nav-dropdown-toggle").click(function() {
+                $(this).closest(".dashboard-nav-dropdown").toggleClass("show").find(".dashboard-nav-dropdown").removeClass("show");
+                $(this).parent().siblings().removeClass("show");
+              });
+              $(".menu-toggle").click(function() {
+                if (mobileScreen.matches) {
+                  $(".dashboard-nav").toggleClass("mobile-show");
+                } else {
+                  $(".dashboard").toggleClass("dashboard-compact");
+                }
+              });
+            });
+          </script>
+        </body>
+      </html>
             $(".dashboard-nav").toggleClass("mobile-show");
           } else {
             $(".dashboard").toggleClass("dashboard-compact");
