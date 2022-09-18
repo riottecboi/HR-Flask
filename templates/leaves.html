@@ -72,7 +72,7 @@
           <a href="" class="menu-toggle">
             <i class="fas fa-bars"></i>
           </a>
-          <a href="{{url_for('leave')}}" class="menu-toggle">
+          <a href="{{url_for('leaves')}}" class="menu-toggle">
             <i class="fas fa-bars">Leave</i>
           </a>
         </header>
@@ -88,58 +88,113 @@
             </script>
             <div class='card' style="margin-bottom: 50px">
               <div class='card-header' style="text-align: left">
-                <h3><b>Leave History</b></h3>
+                <h3><b>Leave Applications</b></h3>
               </div>
               <div class='card-body'>
                 <div style="overflow-x: auto;margin-top: 10px">
                   <table>
                     <tr>
-                      <th>Leave Name</th>
+                      <th>Leave ID</th>
+                      <th>First Name</th>
+                      <th>Last Name</th>
                       <th>Description</th>
                       <th>Start Date</th>
                       <th>End Date</th>
                       <th>Status</th>
+                      <th></th>
                     </tr>
-                    {% for record in records %}
+                    {% for leave in leaves %}
+                    <!-- The Modal -->
+                    <div id="leave_{{leave['id']}}" class="modal">
+
+                      <!-- Modal content -->
+                      <div class="modal-content" style="text-align: center;max-height: 70%">
+                        <div class="modal-header">
+                          <span id="close_{{ leave['id'] }}" class="close">&times;</span>
+                          <h3 style="margin-top: 10px">Leave Action</h3>
+                        </div>
+                        <div class="modal-body">
+                          <form action="{{url_for('leaves')}}" method="post">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            <input type="hidden" name="leaveid" value="{{ leave['id'] }}"/>
+
+                            <p><b>Employee: {% if leave['firstname'] != None %}{{leave['firstname']}}{% endif %} {% if leave['lastname'] != None %}{{leave['lastname']}}{% endif %}</b></p>
+                            <div class="form-label-group">
+                                <input type="text" class="form-control" id="firstname" disabled style="width: 400px" value="{{leave['firstname']}}">
+                                <label for="firstname">First Name</label>
+                            </div>
+
+                            <div class="form-label-group">
+                                <input type="text" class="form-control" id="lastname" disabled style="width: 400px" value="{{leave['lastname']}}">
+                                <label for="lastname">Last Name</label>
+                            </div>
+
+                            <div class="form-label-group">
+                                <textarea class="select_box" disabled id="description" >{{leave['description']}}</textarea>
+                            </div>
+
+                            <div class="form-label-group">
+                              <input type="text" class="form-control" id="sdate" disabled style="width: 400px" value="{{leave['startDate'].strftime('%d-%m-%Y')}}">
+
+                                <label for="sdate">Start Date</label>
+                            </div>
+
+                            <div class="form-label-group">
+                              <input type="text" class="form-control" id="edate" disabled style="width: 400px" value="{{leave['endDate'].strftime('%d-%m-%Y')}}">
+
+                                <label for="edate">End Date</label>
+                            </div>
+
+                            <div class="form-label-group">
+                              {{ form.status(class_="select_box", style="width: 400px", placeholder="Action") }}
+                            </div>
+                            <button class="btn btn-lg btn-primary btn-block btn-color-hover"
+                                    style="margin-bottom:50px;height: 50px;width: 200px;color: whitesmoke;" type="submit">Submit</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
                     <tr>
-                      <td>{% if record['leave'] != None %}{{record['leave']}}{% endif %}</td>
-                      <td>{% if record['description'] != None %}{{record['description']}}{% endif %}</td>
-                      <td>{% if record['sdate'] != None %}{{record['sdate']}}{% endif %}</td>
-                      <td>{% if record['edate'] != None %}{{record['edate']}}{% endif %}</td>
-                      <td>{% if record['status'] != None %}{{record['status']}}{% endif %}</td>
+                      <td>{% if leave['id'] != None %}{{leave['id']}}{% endif %}</td>
+                      <td>{% if leave['firstname'] != None %}{{leave['firstname']}}{% endif %}</td>
+                      <td>{% if leave['lastname'] != None %}{{leave['lastname']}}{% endif %}</td>
+                      <td>{% if leave['description'] != None %}{{leave['description']}}{% endif %}</td>
+                      <td>{% if leave['startDate'] != None %}{{leave['startDate'].strftime('%d-%m-%Y')}}{% endif %}</td>
+                      <td>{% if leave['endDate'] != None %}{{leave['endDate'].strftime('%d-%m-%Y')}}{% endif %}</td>
+                      <td>{% if leave['status'] != None %}{{leave['status']}}{% endif %}</td>
+                      <td><button id="update_{{leave['id']}}" style="border: none"><img src="{{url_for('static', filename='images/edit.png')}}" style="width: 20px"></button></td>
                     </tr>
+                    <script>
+                      // Get the modal
+                      var edit = document.getElementById("leave_{{leave['id']}}");
+
+                      // Get the button that opens the modal
+                      var btn_edit = document.getElementById("update_{{leave['id']}}");
+
+                      // Get the <span> element that closes the modal
+                      var close = document.getElementsByClassName("close")[0];
+
+                      // When the user clicks the button, open the modal
+                      btn_edit.onclick = function() {
+                        edit.style.display = "block";
+                      }
+
+                      // When the user clicks on <span> (x), close the modal
+                      close.onclick = function() {
+                        edit.style.display = "none";
+                      }
+
+                      // When the user clicks anywhere outside of the modal, close it
+                      window.onclick = function(event) {
+                        if (event.target == edit) {
+                          edit.style.display = "none";
+                        }
+                      }
+                    </script>
                     {% endfor %}
                   </table>
                 </div>
               </div>
-            </div>
-            <div class='card' style="text-align: center;margin: auto;width: 50%; border: 3px solid #443ea2; padding: 10px; text-align: center">
-                <div class='card-header' >
-                    <h3><b>Leave Application form</b></h3>
-                  </div>
-                  <div class='card-body'>
-                    <div style="overflow-x: auto;margin-top: 10px">
-                        <form action="{{url_for('submitform')}}" method="post">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                            <div class="form-label-group">
-                                <input type="date" id="start_datepicker" name="sdate" style="width: 400px"/>
-                                <label for="datepicker">Start Date</label>
-                            </div>
-                            <div class="form-label-group">
-                                <input type="date" id="end_datepicker" name="edate" style="width: 400px"/>
-                                <label for="datepicker">End Date</label>
-                            </div>
-                            <div class="form-label-group">
-                            {{ form.type(class_="select_box", style="width: 400px", placeholder="Leave Types") }}
-                            </div>
-                            <div class="form-label-group">
-                            {{ form.description(class_="select_box", style="width: 400px", placeholder="Any note can write down here") }}
-                            </div>
-                            <button class="btn btn-lg btn-primary btn-block btn-color-hover" style="margin-bottom:50px;height: 50px;width: 200px;color: whitesmoke;" type="submit">Submit</button>
-                        </form>
-                    </div>
-                  </div>
-                </div>
             </div>
             </div>
           </div>

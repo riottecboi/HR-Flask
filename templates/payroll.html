@@ -55,11 +55,11 @@
               <i class="fas fa-money-check-alt"></i> Payroll </a>
 
           </div>
-<!--          <div class='dashboard-nav-dropdown'>-->
-<!--            <a href="" class="dashboard-nav-item">-->
-<!--              <i class="fas fa-money-check-alt"></i> Leave </a>-->
+          <div class='dashboard-nav-dropdown'>
+            <a href="{{url_for('leave')}}" class="dashboard-nav-item">
+              <i class="fas fa-money-check-alt"></i> Leave </a>
 
-<!--          </div>-->
+          </div>
           <a href="#" class="dashboard-nav-item">
             <i class="fas fa-user"></i> Profile </a>
           <div class="nav-item-divider"></div>
@@ -72,7 +72,7 @@
           <a href="" class="menu-toggle">
             <i class="fas fa-bars"></i>
           </a>
-          <a href="{{url_for('employee')}}" class="menu-toggle">
+          <a href="{{url_for('payroll')}}" class="menu-toggle">
             <i class="fas fa-bars">Payrolls</i>
           </a>
         </header>

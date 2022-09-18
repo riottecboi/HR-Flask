@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import PasswordField, StringField, EmailField, IntegerField, DateField, FloatField
+from wtforms import PasswordField, StringField, EmailField, IntegerField, SelectField, FloatField, TextAreaField
 from wtforms.validators import Email, DataRequired
+from wtforms.widgets import TextArea
 
 # login and registration
 
@@ -56,3 +57,17 @@ class PaySlip(FlaskForm):
     deduction = FloatField('Deduction', id='deduction')
     overtime = FloatField('Overtime', id='overtime')
     payrate = FloatField('Pay rate', id='payrate')
+
+class SubmitLeaveForm(FlaskForm):
+    type = SelectField('Leave Type', id='types', choices=[('Annual Leave', 'Annual Leave'), ('Emergency Leave', 'Emergency Leave'),
+                                                          ('Sick Leave', 'Sick Leave'), ('Maternity Leave', 'Maternity Leave')])
+    description = StringField('Description', id='description', widget=TextArea())
+
+
+class LeaveForm(FlaskForm):
+    firstname = StringField('Firstname', id='firstname')
+    lastname = StringField('Lastname', id='lastname')
+    description = StringField('Description', id='description')
+    startdate = StringField('Start Date', id='sdate')
+    enddate = StringField('End Date', id='edate')
+    status = SelectField('Status', id='status', choices=[('pending', 'Pending'), ('approve', 'Approve'), ('decline', 'Decline')])

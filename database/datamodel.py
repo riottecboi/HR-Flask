@@ -71,9 +71,11 @@ class Leave(Base):
     userid = Column(Integer, index=True)
     firstname = Column(String(255))
     lastname = Column(String(255))
+    leavetype = Column(String(32))
     description = Column(Text)
     startDate = Column(DateTime)
     endDate = Column(DateTime)
+    status = Column(String(64))
 
 class Payroll(Base):
     __tablename__ = 'payroll'
