@@ -9,7 +9,7 @@ from sqlalchemy.orm import sessionmaker
 
 from database.crud import *
 from database.datamodel import *
-from authentication.form import LoginForm, CreateAccountForm, AddUser, PaySlip, EditUser
+from authentication.form import LoginForm, CreateAccountForm, AddUser, PaySlip
 from datetime import datetime
 from functools import wraps
 
