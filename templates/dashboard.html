@@ -10,35 +10,39 @@
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   </head>
   <style>
-    //css cua nhu 
-    
-    .section-avatar{
-      margin-top: 40px ;
-    }
-    .content-avatar{
-      margin: 0px 30px;
-    }
-    .img-people{
-      width:100px;
-      height:100px;
-      border-radius:100px;
-      border: 1px solid black;
-      margin: 0 auto;
-      display: block;
-      margin-bottom: 16px;
-      object-fit : cover;
-    }
 
-    .infor-people{
-      text-align:center;
-      font-size: 16px;
-    }
-    .infor-people-name{
-      text-align:center;
-      font-size: 18px;
-      font-weight: 600;
+  //css cua nhu 
+  
+  .section-avatar{
+    margin-top: 40px ;
+  }
+  .content-avatar{
+    margin: 32px;
+  }
+  .img-people{
+    width:100px;
+    height:100px;
+    border-radius:100px;
+    border: 1px solid black;
+    margin: 0 auto;
+    display: block;
+    margin-bottom: 16px;
+    object-fit : cover;
+  }
 
-    }
+  .infor-people{
+    text-align:center;
+    font-size: 16px;
+  }
+  .infor-people-name{
+    text-align:center;
+    font-size: 18px;
+    font-weight: 600;
+
+  }
+  .detail-avatar{
+    width: 450px;
+  }
   </style>
   <body>
     <div class='dashboard'>
@@ -123,7 +127,7 @@
                 <p>Your account type is: {{userType}}</p>
               </div>
             </div>
-            <div class="section-avatar" style="margin-top:40px; display: flex;     justify-content: space-between;">
+            <div class="section-avatar" style="margin-top:40px; display: flex; flex-wrap:wrap">
               <div class="content-avatar">
                 <div class="detail-avatar">
                   <img class="img-people" src="https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg" />
@@ -138,6 +142,17 @@
               <div class="content-avatar">
                 <div class="detail-avatar">
                   <img class="img-people" src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRRyYPpSOn_kpXBtE4wJ50MCIJ9J7bBAq8_swh03mb1kml7lGqF" />
+                  <div class="infor-people-name">
+                    Sam Worthington
+                  </div>
+                  <div class="infor-people">
+                    Samuel Henry J. "Sam" Worthington là một diễn viên người Úc. Anh được biết đến với vai Jake Sully trong Avatar
+                  </div>
+                </div>
+              </div>
+              <div class="content-avatar">
+                <div class="detail-avatar">
+                  <img class="img-people" src="https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg" />
                   <div class="infor-people-name">
                     Sam Worthington
                   </div>
