@@ -9,7 +9,9 @@ from sqlalchemy.orm import sessionmaker
 
 from database.crud import *
 from database.datamodel import *
-from authentication.form import LoginForm, CreateAccountForm, AddUser
+from authentication.form import LoginForm, CreateAccountForm, AddUser, PaySlip
+from datetime import datetime
+from functools import wraps
 
 import boto3
 import os
@@ -52,6 +54,14 @@ def user_loader(username):
         return None
     else:
         return user
+
+def admin_only(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if not current_user.is_admin:
+            return redirect(url_for('menu'))
+        return func(*args, **kwargs)
+    return wrapper
 
 @login.unauthorized_handler
 def unauthorized():
@@ -109,6 +119,7 @@ def signup():
 
 @app.route("/employee", methods=['GET', 'POST'])
 @login_required
+@admin_only
 def employee():
     form = AddUser()
     session = sessionFactory()
@@ -140,27 +151,68 @@ def employee():
                     Bucket=app.config['AWS_BUCKET'],
                     Key=filename,
                 )
+                os.remove(app.config['TMP_PATH']+'/'+filename)
                 # url = s3.generate_presigned_url(ClientMethod='get_object', Params={'Bucket': app.config['AWS_BUCKET'],'Key': filename})
 
-            user = User(userid=authentication.id, email=form.email.data, firstname=form.firstname.data, image=filename,
+            user = User(email=form.email.data, firstname=form.firstname.data, image=filename,
                         lastname=form.lastname.data, age=form.age.data, phone=form.phone.data, jobtitle=form.position.data,
                         department=form.department.data, location=form.location.data, primaryskills=form.skills.data)
-            session.add(user)
-            session.commit()
+
+
+            payroll = Payroll(firstname=user.firstname, lastname=user.lastname)
 
             authentication.change_password(form.password.data)
             session.add(authentication)
+            session.commit()
+
+            user.userid = authentication.id
+            session.add(user)
+            session.commit()
+
+            payroll.userid = authentication.id
+            session.add(payroll)
             session.commit()
 
             session.close()
             flash("Adding user successful", "info")
             return redirect(url_for('employee'))
         session.close()
-        return render_template('employee.html', users=users, username=current_user.username, form=form)
+        return render_template('employee.html', admin=current_user.is_admin, users=users, username=current_user.username, form=form)
     except Exception as e:
         session.close()
         flash("Exception occurred - Cannot add new user", "error")
         return redirect(url_for('employee'))
+
+
+@app.route("/payroll", methods=["GET", "POST"])
+@login_required
+def payroll():
+    session = sessionFactory()
+    form = PaySlip()
+    try:
+        if request.method == 'POST':
+            if 'edit' in request.args:
+                date = request.form.get('date')
+                datedb = datetime.strptime(date, '%Y-%m-%d')
+                session.query(Payroll).filter(Payroll.id==request.args.get('edit')).update({'basicSalary': form.salary.data, 'tax': form.tax.data,
+                                                                                                      'deduction': form.deduction.data, 'overTime': form.overtime.data,
+                                                                                                      'totalPayRate': form.payrate.data, 'payDate': datedb})
+
+                session.commit()
+                session.close()
+                flash('Edited successful', "info")
+            else:
+                flash('Could not edit pay slip', 'info')
+                return redirect(url_for('payroll'))
+        if current_user.is_admin:
+            payrolls = get_user_payroll(session)
+        else:
+            payrolls = get_payroll_by_user(session, current_user.id)
+        session.close()
+        return render_template('payroll.html', admin=current_user.is_admin,  payrolls=payrolls, form=form)
+    except Exception as e:
+        session.close()
+        return redirect(url_for('menu'))
 
 
 @app.route("/menu", methods=["GET", "POST"])
@@ -170,7 +222,7 @@ def menu():
     userType = 'User'
     if admin is True:
         userType = 'Administrator'
-    return render_template('dashboard.html', user=current_user.username, userType=userType)
+    return render_template('dashboard.html', admin=current_user.is_admin, user=current_user.username, userType=userType)
 
 @app.route('/logout')
 def logout():

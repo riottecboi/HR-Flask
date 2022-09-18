@@ -36,6 +36,7 @@
 <!--              <a href="#" class="dashboard-nav-dropdown-item">Video</a>-->
 <!--            </div>-->
 <!--          </div>-->
+          {% if admin is sameas true %}
           <div class='dashboard-nav-dropdown'>
             <a href="{{url_for('employee')}}" class="dashboard-nav-item active">
               <i class="fas fa-users"></i> Employees </a>
@@ -47,6 +48,7 @@
 <!--              <a href="#" class="dashboard-nav-dropdown-item">New</a>-->
 <!--            </div>-->
           </div>
+          {% endif %}
           <div class='dashboard-nav-dropdown'>
             <a href="{{url_for('payroll')}}" class="dashboard-nav-item">
               <i class="fas fa-money-check-alt"></i> Payroll </a>
@@ -174,7 +176,7 @@
             <div style="overflow-x: auto;margin-top: 10px">
               <table>
                 <tr>
-                  <th>ID</th>
+<!--                  <th>ID</th>-->
                   <th>First Name</th>
                   <th>Last Name</th>
                   <th>Age</th>
@@ -187,7 +189,7 @@
                 </tr>
                 {% for user in users %}
                 <tr>
-                  <td>{{user['id']}}</td>
+<!--                  <td>{{user['id']}}</td>-->
                   <td>{% if user['firstname'] != None %}{{user['firstname']}}{% endif %}</td>
                   <td>{% if user['lastname'] != None %}{{user['lastname']}}{% endif %}</td>
                   <td>{% if user['age'] != None %}{{user['age']}}{% endif %}</td>

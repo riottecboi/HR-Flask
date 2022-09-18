@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
   <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Payroll</title>
     <link href="{{url_for('static', filename='css/dashboard.css')}}" rel="stylesheet">
     <link href="{{url_for('static', filename='css/modal.css')}}" rel="stylesheet">
     <link href="{{url_for('static', filename='css/style.css')}}" rel="stylesheet">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 
   </head>
@@ -36,6 +37,7 @@
 <!--              <a href="#" class="dashboard-nav-dropdown-item">Video</a>-->
 <!--            </div>-->
 <!--          </div>-->
+          {% if admin is sameas true %}
           <div class='dashboard-nav-dropdown'>
             <a href="{{url_for('employee')}}" class="dashboard-nav-item ">
               <i class="fas fa-users"></i> Employees </a>
@@ -47,6 +49,7 @@
 <!--              <a href="#" class="dashboard-nav-dropdown-item">New</a>-->
 <!--            </div>-->
           </div>
+          {% endif %}
           <div class='dashboard-nav-dropdown'>
             <a href="{{url_for('payroll')}}" class="dashboard-nav-item active">
               <i class="fas fa-money-check-alt"></i> Payroll </a>
@@ -65,7 +68,7 @@
             <i class="fas fa-bars"></i>
           </a>
           <a href="{{url_for('employee')}}" class="menu-toggle">
-            <i class="fas fa-bars">Employees</i>
+            <i class="fas fa-bars">Payrolls</i>
           </a>
         </header>
         <div class='dashboard-content'>
@@ -80,124 +83,131 @@
             </script>
             <div class='card'>
               <div class='card-header' style="text-align: left">
-                <h3><b>Employee Console</b><button id="myBtn" class="btn btn-lg btn-primary btn-block btn-color-hover" style="float: right" type="button">ADD</button></h3>
+                <h3><b>Payroll Console</b>
+<!--                  <button id="myBtn" class="btn btn-lg btn-primary btn-block btn-color-hover" style="float: right" type="button">ADD</button>-->
+                </h3>
               </div>
               <div class='card-body'>
-                <p>All employees are showing here</p>
+                <p>All payrolls are showing here</p>
               </div>
             </div>
-            <!-- The Modal -->
-            <div id="myModal" class="modal">
 
-              <!-- Modal content -->
-              <div class="modal-content" style="text-align: center">
-                <div class="modal-header">
-                  <span class="close">&times;</span>
-                  <h3 style="margin-top: 10px">Add new employee</h3>
-                </div>
-                <div class="modal-body">
-                  <form action="{{url_for('employee')}}" method="post" enctype="multipart/form-data">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                    <p><b>USER INFORMATION</b></p>
-                    <div class="form-label-group">
-                        <input type="file" id="profile" name="profile">
-                        <label for="profile">Profile</label>
-                    </div>
-                    <div class="form-label-group">
-                        {{ form.firstname(id="firstname", class_="form-control", placeholder="First Name") }}
-                        <label for="firstname">First Name</label>
-                    </div>
-
-                    <div class="form-label-group">
-                        {{ form.lastname(id="lastname", class_="form-control", placeholder="Last Name") }}
-                        <label for="lastname">Last Name</label>
-                    </div>
-                    <div class="form-label-group">
-                        {{ form.age(id="age", class_="form-control", placeholder="Age") }}
-                        <label for="age">Age</label>
-                    </div>
-
-                    <div class="form-label-group">
-                        {{ form.phone(id="phone", class_="form-control", placeholder="Phone") }}
-                        <label for="phone">Phone</label>
-                    </div>
-                    <div class="form-label-group">
-                        {{ form.email(id="email", class_="form-control", placeholder="Email", required=True) }}
-                        <label for="email">Email</label>
-                    </div>
-
-                    <div class="form-label-group">
-                        {{ form.position(id="position", class_="form-control", placeholder="Position") }}
-                        <label for="position">Position</label>
-                    </div>
-
-                    <div class="form-label-group">
-                        {{ form.department(id="department", class_="form-control", placeholder="Department") }}
-                        <label for="department">Department</label>
-                    </div>
-
-                    <div class="form-label-group">
-                        {{ form.location(id="location", class_="form-control", placeholder="Location") }}
-                        <label for="location">Location</label>
-                    </div>
-                    <div class="form-label-group">
-                        {{ form.skills(id="skill", class_="form-control", placeholder="Skills") }}
-                        <label for="skill">Skills</label>
-                    </div>
-
-                    <hr>
-                    <p><b>USER AUTHENTICATION</b></p>
-                    <div class="form-label-group">
-                        {{ form.username(id="username", class_="form-control", placeholder="Username", required=True) }}
-                        <label for="username">Username</label>
-                    </div>
-
-                    <div class="form-label-group">
-                        {{ form.password(id="password", class_="form-control", placeholder="Password", required=True) }}
-                        <label for="password">Password</label>
-                    </div>
-
-                    <div class="form-label-group">
-                        {{ form.confirm(id="confirm", class_="form-control", placeholder="Confirm Password", required=True) }}
-                        <label for="confirm">Confirm Password</label>
-                    </div>
-
-                    <button class="btn btn-lg btn-primary btn-block btn-color-hover"
-                            style="margin-bottom:50px;height: 50px;width: 200px;color: whitesmoke;" type="submit">Submit</button>
-                  </form>
-                </div>
-
-              </div>
-
-            </div>
             <div style="overflow-x: auto;margin-top: 10px">
               <table>
                 <tr>
+                  {% if admin is sameas true %}
                   <th>ID</th>
+                  {% endif %}
                   <th>First Name</th>
                   <th>Last Name</th>
-                  <th>Age</th>
-                  <th>Phone</th>
-                  <th>Email</th>
-                  <th>Position</th>
-                  <th>Primary Skills</th>
-                  <th>Department</th>
-                  <th>Location</th>
+                  <th>Basic Salary</th>
+                  <th>Tax</th>
+                  <th>Deduction</th>
+                  <th>Overtime</th>
+                  <th>Total Pay Rate</th>
+                  <th>Pay Date</th>
+                  {% if admin is sameas true %}
+                  <th></th>
+                  {% endif %}
                 </tr>
-                {% for user in users %}
+                {% if payrolls|length !=0 %}
+                {% for payroll in payrolls %}
+                <!-- The Modal -->
+                <div id="user_{{payroll['id']}}" class="modal">
+
+                  <!-- Modal content -->
+                  <div class="modal-content" style="text-align: center">
+                    <div class="modal-header">
+                      <span class="close">&times;</span>
+                      <h3 style="margin-top: 10px">Edit Pay Slip</h3>
+                    </div>
+                    <div class="modal-body">
+                      <form action="payroll?edit={{ payroll['id'] }}" method="post">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+                        <p><b>Employee: {% if payroll['firstname'] != None %}{{payroll['firstname']}}{% endif %} {% if payroll['lastname'] != None %}{{payroll['lastname']}}{% endif %}</b></p>
+                        <div class="form-label-group">
+                            {{ form.salary( class_="form-control", placeholder="Basic Salary") }}
+                            <label for="salary">Basic Salary</label>
+                        </div>
+
+                        <div class="form-label-group">
+                            {{ form.tax( class_="form-control", placeholder="Tax") }}
+                            <label for="tax">Tax</label>
+                        </div>
+
+                        <div class="form-label-group">
+                            {{ form.deduction( class_="form-control", placeholder="Deduction") }}
+                            <label for="deduction">Deduction</label>
+                        </div>
+
+                        <div class="form-label-group">
+                            {{ form.overtime( class_="form-control", placeholder="Overtime") }}
+                            <label for="overtime">Overtime</label>
+                        </div>
+
+                        <div class="form-label-group">
+                            {{ form.payrate( class_="form-control", placeholder="Pay Rate") }}
+                            <label for="payrate">Pay Rate</label>
+                        </div>
+                        <div class="form-label-group">
+                            <input type="date" id="datepicker_{{payroll['id']}}" name="date" style="width: 227px"/>
+                            <label for="datepicker_{{payroll['id']}}">Date Pay</label>
+                        </div>
+
+                        <button class="btn btn-lg btn-primary btn-block btn-color-hover"
+                                style="margin-bottom:50px;height: 50px;width: 200px;color: whitesmoke;" type="submit">Submit</button>
+                      </form>
+                    </div>
+
+                  </div>
+
+                </div>
                 <tr>
-                  <td>{{user['id']}}</td>
-                  <td>{% if user['firstname'] != None %}{{user['firstname']}}{% endif %}</td>
-                  <td>{% if user['lastname'] != None %}{{user['lastname']}}{% endif %}</td>
-                  <td>{% if user['age'] != None %}{{user['age']}}{% endif %}</td>
-                  <td>{% if user['phone'] != None %}{{user['phone']}}{% endif %}</td>
-                  <td>{% if user['email'] != None %}{{user['email']}}{% endif %}</td>
-                  <td>{% if user['position'] != None %}{{user['position']}}{% endif %}</td>
-                  <td>{% if user['skill'] != None %}{{user['skill']}}{% endif %}</td>
-                  <td>{% if user['department'] != None %}{{user['department']}}{% endif %}</td>
-                  <td>{% if user['location'] != None %}{{user['location']}}{% endif %}</td>
+                  {% if admin is sameas true %}
+                  <td>{{payroll['id']}}</td>
+                  {% endif %}
+                  <td>{% if payroll['firstname'] != None %}{{payroll['firstname']}}{% endif %}</td>
+                  <td>{% if payroll['lastname'] != None %}{{payroll['lastname']}}{% endif %}</td>
+                  <td>{% if payroll['basicSalary'] != None %}{{payroll['basicSalary']}}{% endif %}</td>
+                  <td>{% if payroll['tax'] != None %}{{payroll['tax']}}{% endif %}</td>
+                  <td>{% if payroll['deduction'] != None %}{{payroll['deduction']}}{% endif %}</td>
+                  <td>{% if payroll['overTime'] != None %}{{payroll['overTime']}}{% endif %}</td>
+                  <td>{% if payroll['totalPayRate'] != None %}{{payroll['totalPayRate']}}{% endif %}</td>
+                  <td>{% if payroll['payDate'] != None %}{{payroll['payDate'].strftime('%d-%m-%Y')}}{% endif %}</td>
+                  {% if admin is sameas true %}
+                  <td><button id="payroll_{{payroll['id']}}" style="border: none"><img src="{{url_for('static', filename='images/edit.png')}}" style="width: 20px"></button></td>
+                  {% endif %}
                 </tr>
+                <script>
+                  // Get the modal
+                  var modal = document.getElementById("user_{{payroll['id']}}");
+
+                  // Get the button that opens the modal
+                  var btn = document.getElementById("payroll_{{payroll['id']}}");
+
+                  // Get the <span> element that closes the modal
+                  var span = document.getElementsByClassName("close")[0];
+
+                  // When the user clicks the button, open the modal
+                  btn.onclick = function() {
+                    modal.style.display = "block";
+                  }
+
+                  // When the user clicks on <span> (x), close the modal
+                  span.onclick = function() {
+                    modal.style.display = "none";
+                  }
+
+                  // When the user clicks anywhere outside of the modal, close it
+                  window.onclick = function(event) {
+                    if (event.target == modal) {
+                      modal.style.display = "none";
+                    }
+                  }
+                </script>
                 {% endfor %}
+                {% endif %}
               </table>
             </div>
           </div>
@@ -219,33 +229,6 @@
           }
         });
       });
-    </script>
-    <script>
-      // Get the modal
-      var modal = document.getElementById("myModal");
-
-      // Get the button that opens the modal
-      var btn = document.getElementById("myBtn");
-
-      // Get the <span> element that closes the modal
-      var span = document.getElementsByClassName("close")[0];
-
-      // When the user clicks the button, open the modal
-      btn.onclick = function() {
-        modal.style.display = "block";
-      }
-
-      // When the user clicks on <span> (x), close the modal
-      span.onclick = function() {
-        modal.style.display = "none";
-      }
-
-      // When the user clicks anywhere outside of the modal, close it
-      window.onclick = function(event) {
-        if (event.target == modal) {
-          modal.style.display = "none";
-        }
-      }
     </script>
   </body>
 </html>
