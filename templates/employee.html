@@ -192,8 +192,79 @@
                   <th>Primary Skills</th>
                   <th>Department</th>
                   <th>Location</th>
+                  {% if admin is sameas true %}
+                  <th></th>
+                  {% endif %}
                 </tr>
                 {% for user in users %}
+                  <!-- The Modal -->
+                <div id="user_{{user['id']}}" class="modal">
+
+                  <!-- Modal content -->
+                  <div class="modal-content" style="text-align: center">
+                    <div class="modal-header">
+                      <span id="close_{{ user['id'] }}" class="close">&times;</span>
+                      <h3 style="margin-top: 10px">Edit User Infomation</h3>
+                    </div>
+                    <div class="modal-body">
+                      <form action="editprofile?edit={{ user['id'] }}" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+                        <p><b>Employee: {% if user['firstname'] != None %}{{user['firstname']}}{% endif %} {% if user['lastname'] != None %}{{user['lastname']}}{% endif %}</b></p>
+                        <div class="form-label-group">
+                            <input type="file" id="profile_{{user['id']}}" name="profile">
+                            <label for="profile">Profile</label>
+                        </div>
+                        <div class="form-label-group">
+                        {{ form.firstname(id="firstname", class_="form-control", placeholder="First Name", value=user['firstname']) }}
+                        <label for="firstname">First Name</label>
+                        </div>
+
+                        <div class="form-label-group">
+                            {{ form.lastname(id="lastname", class_="form-control", placeholder="Last Name", value=user['lastname']) }}
+                            <label for="lastname">Last Name</label>
+                        </div>
+                        <div class="form-label-group">
+                            {{ form.age(id="age", class_="form-control", placeholder="Age", value=user['age']) }}
+                            <label for="age">Age</label>
+                        </div>
+
+                        <div class="form-label-group">
+                            {{ form.phone(id="phone", class_="form-control", placeholder="Phone", value=user['phone']) }}
+                            <label for="phone">Phone</label>
+                        </div>
+                        <div class="form-label-group">
+                            {{ form.email(id="email", class_="form-control", placeholder="Email", required=True, value=user['email']) }}
+                            <label for="email">Email</label>
+                        </div>
+
+                        <div class="form-label-group">
+                            {{ form.position(id="position", class_="form-control", placeholder="Position", value=user['position']) }}
+                            <label for="position">Position</label>
+                        </div>
+
+                        <div class="form-label-group">
+                            {{ form.department(id="department", class_="form-control", placeholder="Department", value=user['department']) }}
+                            <label for="department">Department</label>
+                        </div>
+
+                        <div class="form-label-group">
+                            {{ form.location(id="location", class_="form-control", placeholder="Location", value=user['location']) }}
+                            <label for="location">Location</label>
+                        </div>
+                        <div class="form-label-group">
+                            {{ form.skills(id="skill", class_="form-control", placeholder="Skills", value=user['skill']) }}
+                            <label for="skill">Skills</label>
+                        </div>
+
+                        <button class="btn btn-lg btn-primary btn-block btn-color-hover"
+                                style="margin-bottom:50px;height: 50px;width: 200px;color: whitesmoke;" type="submit">Submit</button>
+                      </form>
+                    </div>
+
+                  </div>
+
+                </div>
                 <tr>
 <!--                  <td>{{user['id']}}</td>-->
                   <td>{% if user['firstname'] != None %}{{user['firstname']}}{% endif %}</td>
@@ -205,7 +276,44 @@
                   <td>{% if user['skill'] != None %}{{user['skill']}}{% endif %}</td>
                   <td>{% if user['department'] != None %}{{user['department']}}{% endif %}</td>
                   <td>{% if user['location'] != None %}{{user['location']}}{% endif %}</td>
+                  {% if admin is sameas true %}
+                  <td><button type="button" id="edit_{{user['id']}}" style="border: none"><img src="{{url_for('static', filename='images/edit.png')}}" style="width: 20px"></button></td>
+                  {% endif %}
                 </tr>
+                  <script>
+                   // function modal() {
+                   //      var edit = document.getElementById("user_{{user['id']}}");
+                   //      var btn_edit = document.getElementById("edit_{{user['id']}}");
+                   //      var close = document.getElementsByClassName("close")[0];
+                   //      btn_edit.onclick =
+                   //
+                   // }
+                  // Get the modal
+                  var edit = document.getElementById("user_{{user['id']}}");
+
+                  // Get the button that opens the modal
+                  var btn_edit = document.getElementById("edit_{{user['id']}}");
+
+                  // Get the <span> element that closes the modal
+                  var close = document.getElementById("close_{{ user['id'] }}");
+
+                  // When the user clicks the button, open the modal
+                  btn_edit.onclick = function() {
+                    edit.style.display = "block";
+                  }
+
+                  // When the user clicks on <span> (x), close the modal
+                  close.onclick = function() {
+                    edit.style.display = "none";
+                  }
+
+                  // When the user clicks anywhere outside of the modal, close it
+                  window.onclick = function(event) {
+                    if (event.target == edit) {
+                      edit.style.display = "none";
+                    }
+                  }
+                </script>
                 {% endfor %}
               </table>
             </div>

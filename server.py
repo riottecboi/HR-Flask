@@ -9,7 +9,7 @@ from sqlalchemy.orm import sessionmaker
 
 from database.crud import *
 from database.datamodel import *
-from authentication.form import LoginForm, CreateAccountForm, AddUser, PaySlip
+from authentication.form import LoginForm, CreateAccountForm, AddUser, PaySlip, EditUser
 from datetime import datetime
 from functools import wraps
 
@@ -116,6 +116,47 @@ def signup():
     except Exception as e:
         flash("Could not sign up for new user", "error")
         return render_template('login.html', loginform=loginform, sigupform=sigupform)
+
+@app.route("/editprofile", methods=['POST'])
+@login_required
+def editprofile():
+    form = AddUser()
+    session = sessionFactory()
+    try:
+        if 'edit' in request.args:
+            filename = None
+            if form.phone.data == '':
+                form.phone.data = None
+            s3 = boto3.client('s3',
+                              aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'],
+                              aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY']
+                              )
+            file = request.files.get('profile')
+            if file.filename != '':
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                s3.upload_file(
+                    Filename=app.config['TMP_PATH'] + '/' + filename,
+                    Bucket=app.config['AWS_BUCKET'],
+                    Key=filename,
+                )
+                os.remove(app.config['TMP_PATH'] + '/' + filename)
+                # url = s3.generate_presigned_url(ClientMethod='get_object', Params={'Bucket': app.config['AWS_BUCKET'],'Key': filename})
+            session.query(User).filter(User.id == request.args.get('edit')).update(
+                {'firstname': form.firstname.data, 'lastname': form.lastname.data,
+                 'age': form.age.data, 'phone': form.phone.data, 'image': filename,
+                 'email': form.email.data, 'jobtitle': form.position.data, 'primaryskills': form.skills.data, 'department': form.department.data, 'location': form.location.data})
+            session.commit()
+            session.close()
+            flash('Updated user information successful', "info")
+            return redirect(url_for('employee'))
+        else:
+            flash('Bad request', "error")
+            return redirect(url_for('employee'))
+    except Exception as e:
+        flash("Exception occurred - Cannot edit user", "error")
+        return redirect(url_for('employee'))
+
 
 @app.route("/employee", methods=['GET', 'POST'])
 @login_required
