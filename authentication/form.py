@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import PasswordField, StringField, EmailField, IntegerField, TextAreaField
+from wtforms import PasswordField, StringField, EmailField, IntegerField, DateField, FloatField
 from wtforms.validators import Email, DataRequired
 
 # login and registration
@@ -49,3 +49,10 @@ class AddUser(FlaskForm):
     confirm = PasswordField('Confirm Password',
                             id='confirm',
                             validators=[DataRequired()])
+
+class PaySlip(FlaskForm):
+    salary = FloatField('Basic salary', id='salary')
+    tax = FloatField('Tax', id='tax')
+    deduction = FloatField('Deduction', id='deduction')
+    overtime = FloatField('Overtime', id='overtime')
+    payrate = FloatField('Pay rate', id='payrate')

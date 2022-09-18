@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Leave</title>
     <link href="{{url_for('static', filename='css/dashboard.css')}}" rel="stylesheet">
     <link href="{{url_for('static', filename='css/modal.css')}}" rel="stylesheet">
     <link href="{{url_for('static', filename='css/style.css')}}" rel="stylesheet">
@@ -38,7 +38,7 @@
 <!--          </div>-->
           {% if admin is sameas true %}
           <div class='dashboard-nav-dropdown'>
-            <a href="{{url_for('employee')}}" class="dashboard-nav-item active">
+            <a href="{{url_for('employee')}}" class="dashboard-nav-item">
               <i class="fas fa-users"></i> Employees </a>
 <!--            <div class='dashboard-nav-dropdown-menu'>-->
 <!--              <a href="#" class="dashboard-nav-dropdown-item">All</a>-->
@@ -54,12 +54,11 @@
               <i class="fas fa-money-check-alt"></i> Payroll </a>
 
           </div>
+          <div class='dashboard-nav-dropdown'>
+            <a href="{{url_for('leave')}}" class="dashboard-nav-item active">
+              <i class="fas fa-money-check-alt"></i> Leave </a>
 
-<!--          <div class='dashboard-nav-dropdown'>-->
-<!--            <a href="{{url_for('leave')}}" class="dashboard-nav-item">-->
-<!--              <i class="fas fa-money-check-alt"></i> Leave </a>-->
-
-<!--          </div>-->
+          </div>
 
           <a href="#" class="dashboard-nav-item">
             <i class="fas fa-user"></i> Profile </a>
@@ -73,8 +72,8 @@
           <a href="" class="menu-toggle">
             <i class="fas fa-bars"></i>
           </a>
-          <a href="{{url_for('employee')}}" class="menu-toggle">
-            <i class="fas fa-bars">Employees</i>
+          <a href="{{url_for('leave')}}" class="menu-toggle">
+            <i class="fas fa-bars">Leave</i>
           </a>
         </header>
         <div class='dashboard-content'>

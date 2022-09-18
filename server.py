@@ -2,20 +2,29 @@ from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_wtf.csrf import CSRFProtect
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 from flask_env import MetaFlaskEnv
+from werkzeug.utils import secure_filename
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from database.crud import *
 from database.datamodel import *
-from authentication.form import LoginForm, CreateAccountForm, AddUser
+from authentication.form import LoginForm, CreateAccountForm, AddUser, PaySlip
+from datetime import datetime
+from functools import wraps
 
+import boto3
+import os
 
 class Configuration(metaclass=MetaFlaskEnv):
     SECRET_KEY = "supersecretkey"
+    AWS_BUCKET = 'hr-fiver-test'
+    AWS_ACCESS_KEY_ID = 'XXXX'
+    AWS_SECRET_ACCESS_KEY = 'XXXX'
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://localhost:3306/fiver?user=root&password=root'
     POOL_SIZE = 1
     POOL_RECYCLE = 60
+    TMP_PATH = '/tmp'
 
 app = Flask(__name__)
 try:
@@ -26,6 +35,7 @@ except FileNotFoundError:
     app.config.from_object(Configuration)
 
 app.config['SESSION_COOKIE_SECURE']=True
+app.config['UPLOAD_FOLDER'] = app.config['TMP_PATH']
 csrf = CSRFProtect(app)
 login = LoginManager(app)
 
@@ -44,6 +54,14 @@ def user_loader(username):
         return None
     else:
         return user
+
+def admin_only(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if not current_user.is_admin:
+            return redirect(url_for('menu'))
+        return func(*args, **kwargs)
+    return wrapper
 
 @login.unauthorized_handler
 def unauthorized():
@@ -101,12 +119,18 @@ def signup():
 
 @app.route("/employee", methods=['GET', 'POST'])
 @login_required
+@admin_only
 def employee():
     form = AddUser()
     session = sessionFactory()
     try:
         users = get_all_user(session)
         if request.method == 'POST':
+            filename = None
+            s3 = boto3.client('s3',
+                              aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'],
+                              aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY']
+                              )
             password = form.password.data
             confirm =form.confirm.data
             if password != confirm:
@@ -117,25 +141,78 @@ def employee():
             authentication = UserAuthentication(username=form.username.data)
             if form.phone.data == '':
                 form.phone.data = None
-            user = User(userid=authentication.id, email=form.email.data, firstname=form.firstname.data,
+
+            file = request.files.get('profile')
+            if file.filename != '':
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                s3.upload_file(
+                    Filename=app.config['TMP_PATH']+'/'+filename,
+                    Bucket=app.config['AWS_BUCKET'],
+                    Key=filename,
+                )
+                os.remove(app.config['TMP_PATH']+'/'+filename)
+                # url = s3.generate_presigned_url(ClientMethod='get_object', Params={'Bucket': app.config['AWS_BUCKET'],'Key': filename})
+
+            user = User(email=form.email.data, firstname=form.firstname.data, image=filename,
                         lastname=form.lastname.data, age=form.age.data, phone=form.phone.data, jobtitle=form.position.data,
                         department=form.department.data, location=form.location.data, primaryskills=form.skills.data)
-            session.add(user)
-            session.commit()
+
+
+            payroll = Payroll(firstname=user.firstname, lastname=user.lastname)
 
             authentication.change_password(form.password.data)
             session.add(authentication)
+            session.commit()
+
+            user.userid = authentication.id
+            session.add(user)
+            session.commit()
+
+            payroll.userid = authentication.id
+            session.add(payroll)
             session.commit()
 
             session.close()
             flash("Adding user successful", "info")
             return redirect(url_for('employee'))
         session.close()
-        return render_template('employee.html', users=users, username=current_user.username, form=form)
+        return render_template('employee.html', admin=current_user.is_admin, users=users, username=current_user.username, form=form)
     except Exception as e:
         session.close()
         flash("Exception occurred - Cannot add new user", "error")
         return redirect(url_for('employee'))
+
+
+@app.route("/payroll", methods=["GET", "POST"])
+@login_required
+def payroll():
+    session = sessionFactory()
+    form = PaySlip()
+    try:
+        if request.method == 'POST':
+            if 'edit' in request.args:
+                date = request.form.get('date')
+                datedb = datetime.strptime(date, '%Y-%m-%d')
+                session.query(Payroll).filter(Payroll.id==request.args.get('edit')).update({'basicSalary': form.salary.data, 'tax': form.tax.data,
+                                                                                                      'deduction': form.deduction.data, 'overTime': form.overtime.data,
+                                                                                                      'totalPayRate': form.payrate.data, 'payDate': datedb})
+
+                session.commit()
+                session.close()
+                flash('Edited successful', "info")
+            else:
+                flash('Could not edit pay slip', 'info')
+                return redirect(url_for('payroll'))
+        if current_user.is_admin:
+            payrolls = get_user_payroll(session)
+        else:
+            payrolls = get_payroll_by_user(session, current_user.id)
+        session.close()
+        return render_template('payroll.html', admin=current_user.is_admin,  payrolls=payrolls, form=form)
+    except Exception as e:
+        session.close()
+        return redirect(url_for('menu'))
 
 
 @app.route("/menu", methods=["GET", "POST"])
@@ -145,7 +222,7 @@ def menu():
     userType = 'User'
     if admin is True:
         userType = 'Administrator'
-    return render_template('dashboard.html', user=current_user.username, userType=userType)
+    return render_template('dashboard.html', admin=current_user.is_admin, user=current_user.username, userType=userType)
 
 @app.route('/logout')
 def logout():
