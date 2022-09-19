@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link href="{{url_for('static', filename='css/dashboard.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/profile.css')}}" rel="stylesheet">
     <link href="{{url_for('static', filename='css/modal.css')}}" rel="stylesheet">
     <link href="{{url_for('static', filename='css/style.css')}}" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -17,8 +18,7 @@
             <i class="fas fa-bars"></i>
           </a>
           <a href="#" class="brand-logo">
-            <i class="fas fa-anchor"></i>
-            <span></span>
+            <img style="margin-right: 20px" class="img-people" src="https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg" />
           </a>
         </header>
         <nav class="dashboard-nav-list">
@@ -279,41 +279,27 @@
                   {% if admin is sameas true %}
                   <td><button type="button" id="edit_{{user['id']}}" style="border: none"><img src="{{url_for('static', filename='images/edit.png')}}" style="width: 20px"></button></td>
                   {% endif %}
-                </tr>
                   <script>
-                   // function modal() {
-                   //      var edit = document.getElementById("user_{{user['id']}}");
-                   //      var btn_edit = document.getElementById("edit_{{user['id']}}");
-                   //      var close = document.getElementsByClassName("close")[0];
-                   //      btn_edit.onclick =
-                   //
-                   // }
-                  // Get the modal
-                  var edit = document.getElementById("user_{{user['id']}}");
 
-                  // Get the button that opens the modal
-                  var btn_edit = document.getElementById("edit_{{user['id']}}");
+                      // When the user clicks the button, open the modal
+                      document.getElementById("edit_{{user['id']}}").onclick = function() {
+                        document.getElementById("user_{{user['id']}}").style.display = "block";
+                      }
 
-                  // Get the <span> element that closes the modal
-                  var close = document.getElementById("close_{{ user['id'] }}");
+                      // When the user clicks on <span> (x), close the modal
+                      document.getElementById("close_{{ user['id'] }}").onclick = function() {
+                        document.getElementById("user_{{user['id']}}").style.display = "none";
+                      }
 
-                  // When the user clicks the button, open the modal
-                  btn_edit.onclick = function() {
-                    edit.style.display = "block";
-                  }
+                      // When the user clicks anywhere outside of the modal, close it
+                      window.onclick = function(event) {
+                        if (event.target == document.getElementById("user_{{user['id']}}")) {
+                          document.getElementById("user_{{user['id']}}").style.display = "none";
+                        }
+                      }
+                    </script>
+                </tr>
 
-                  // When the user clicks on <span> (x), close the modal
-                  close.onclick = function() {
-                    edit.style.display = "none";
-                  }
-
-                  // When the user clicks anywhere outside of the modal, close it
-                  window.onclick = function(event) {
-                    if (event.target == edit) {
-                      edit.style.display = "none";
-                    }
-                  }
-                </script>
                 {% endfor %}
               </table>
             </div>

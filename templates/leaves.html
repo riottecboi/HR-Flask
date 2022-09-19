@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Leave</title>
     <link href="{{url_for('static', filename='css/dashboard.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/profile.css')}}" rel="stylesheet">
     <link href="{{url_for('static', filename='css/modal.css')}}" rel="stylesheet">
     <link href="{{url_for('static', filename='css/style.css')}}" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -17,8 +18,7 @@
             <i class="fas fa-bars"></i>
           </a>
           <a href="#" class="brand-logo">
-            <i class="fas fa-anchor"></i>
-            <span></span>
+            <img style="margin-right: 20px" class="img-people" src="https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg" />
           </a>
         </header>
         <nav class="dashboard-nav-list">
@@ -163,29 +163,21 @@
                       <td><button id="update_{{leave['id']}}" style="border: none"><img src="{{url_for('static', filename='images/edit.png')}}" style="width: 20px"></button></td>
                     </tr>
                     <script>
-                      // Get the modal
-                      var edit = document.getElementById("leave_{{leave['id']}}");
-
-                      // Get the button that opens the modal
-                      var btn_edit = document.getElementById("update_{{leave['id']}}");
-
-                      // Get the <span> element that closes the modal
-                      var close = document.getElementsByClassName("close")[0];
-
                       // When the user clicks the button, open the modal
-                      btn_edit.onclick = function() {
-                        edit.style.display = "block";
+                      document.getElementById("update_{{leave['id']}}").onclick = function() {
+                        document.getElementById("leave_{{leave['id']}}").style.display = "block";
                       }
 
                       // When the user clicks on <span> (x), close the modal
-                      close.onclick = function() {
-                        edit.style.display = "none";
+
+                      document.getElementById("close_{{ leave['id'] }}").onclick = function() {
+                        document.getElementById("leave_{{leave['id']}}").style.display = "none";
                       }
 
                       // When the user clicks anywhere outside of the modal, close it
                       window.onclick = function(event) {
-                        if (event.target == edit) {
-                          edit.style.display = "none";
+                        if (event.target == document.getElementById("leave_{{leave['id']}}")) {
+                          document.getElementById("leave_{{leave['id']}}").style.display = "none";
                         }
                       }
                     </script>
