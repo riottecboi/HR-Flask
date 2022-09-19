@@ -22,7 +22,7 @@ def get_all_user(session):
         for user in users:
             admin = user_is_admin(session, user.userid)
             if not admin:
-                user_list.append({'id': user.id, 'firstname': user.firstname, 'lastname': user.lastname,
+                user_list.append({'id': user.id, 'firstname': user.firstname, 'lastname': user.lastname, 'image': user.image,
                               'age': user.age, 'phone': user.phone, 'email': user.email, 'position': user.jobtitle, 'skill': user.primaryskills,
                               'department': user.department, 'location': user.location})
     return user_list

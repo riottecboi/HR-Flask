@@ -93,83 +93,85 @@
               </div>
             </div>
             <div class="section-avatar" style="margin-top:40px; display: flex; flex-wrap:wrap">
+              {% for u in users %}
               <div class="content-avatar">
                 <div class="detail-avatar">
-                  <img class="img-people" src="https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg" />
+                  <img class="img-people" src="{{u['image']}}" />
                   <div class="infor-people-name">
-                    Sam Worthington
+                    {{u['firstname']}} {{u['lastname']}}
                   </div>
                   <div class="infor-people">
-                    Samuel Henry J. "Sam" Worthington là một diễn viên người Úc. Anh được biết đến với vai Jake Sully trong Avatar
+                    {{u['position']}}
                   </div>
                 </div>
               </div>
-              <div class="content-avatar">
-                <div class="detail-avatar">
-                  <img class="img-people" src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRRyYPpSOn_kpXBtE4wJ50MCIJ9J7bBAq8_swh03mb1kml7lGqF" />
-                  <div class="infor-people-name">
-                    Sam Worthington
-                  </div>
-                  <div class="infor-people">
-                    Samuel Henry J. "Sam" Worthington là một diễn viên người Úc. Anh được biết đến với vai Jake Sully trong Avatar
-                  </div>
-                </div>
-              </div>
-              <div class="content-avatar">
-                <div class="detail-avatar">
-                  <img class="img-people" src="https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg" />
-                  <div class="infor-people-name">
-                    Sam Worthington
-                  </div>
-                  <div class="infor-people">
-                    Samuel Henry J. "Sam" Worthington là một diễn viên người Úc. Anh được biết đến với vai Jake Sully trong Avatar
-                  </div>
-                </div>
-              </div>
-              <div class="content-avatar">
-                <div class="detail-avatar">
-                  <img class="img-people" src="https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg" />
-                  <div class="infor-people-name">
-                    Sam Worthington
-                  </div>
-                  <div class="infor-people">
-                    Samuel Henry J. "Sam" Worthington là một diễn viên người Úc. Anh được biết đến với vai Jake Sully trong Avatar
-                  </div>
-                </div>
-              </div>
-              <div class="content-avatar">
-                <div class="detail-avatar">
-                  <img class="img-people" src="https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg" />
-                  <div class="infor-people-name">
-                    Sam Worthington
-                  </div>
-                  <div class="infor-people">
-                    Samuel Henry J. "Sam" Worthington là một diễn viên người Úc. Anh được biết đến với vai Jake Sully trong Avatar
-                  </div>
-                </div>
-              </div>
-              <div class="content-avatar">
-                <div class="detail-avatar">
-                  <img class="img-people" src="https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg" />
-                  <div class="infor-people-name">
-                    Sam Worthington
-                  </div>
-                  <div class="infor-people">
-                    Samuel Henry J. "Sam" Worthington là một diễn viên người Úc. Anh được biết đến với vai Jake Sully trong Avatar
-                  </div>
-                </div>
-              </div>
-              <div class="content-avatar">
-                <div class="detail-avatar">
-                  <img class="img-people" src="https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg" />
-                  <div class="infor-people-name">
-                    Sam Worthington
-                  </div>
-                  <div class="infor-people">
-                    Samuel Henry J. "Sam" Worthington là một diễn viên người Úc. Anh được biết đến với vai Jake Sully trong Avatar
-                  </div>
-                </div>
-              </div>
+              {% endfor %}
+<!--              <div class="content-avatar">-->
+<!--                <div class="detail-avatar">-->
+<!--                  <img class="img-people" src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcRRyYPpSOn_kpXBtE4wJ50MCIJ9J7bBAq8_swh03mb1kml7lGqF" />-->
+<!--                  <div class="infor-people-name">-->
+<!--                    Sam Worthington-->
+<!--                  </div>-->
+<!--                  <div class="infor-people">-->
+<!--                    Samuel Henry J. "Sam" Worthington là một diễn viên người Úc. Anh được biết đến với vai Jake Sully trong Avatar-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <div class="content-avatar">-->
+<!--                <div class="detail-avatar">-->
+<!--                  <img class="img-people" src="https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg" />-->
+<!--                  <div class="infor-people-name">-->
+<!--                    Sam Worthington-->
+<!--                  </div>-->
+<!--                  <div class="infor-people">-->
+<!--                    Samuel Henry J. "Sam" Worthington là một diễn viên người Úc. Anh được biết đến với vai Jake Sully trong Avatar-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <div class="content-avatar">-->
+<!--                <div class="detail-avatar">-->
+<!--                  <img class="img-people" src="https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg" />-->
+<!--                  <div class="infor-people-name">-->
+<!--                    Sam Worthington-->
+<!--                  </div>-->
+<!--                  <div class="infor-people">-->
+<!--                    Samuel Henry J. "Sam" Worthington là một diễn viên người Úc. Anh được biết đến với vai Jake Sully trong Avatar-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <div class="content-avatar">-->
+<!--                <div class="detail-avatar">-->
+<!--                  <img class="img-people" src="https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg" />-->
+<!--                  <div class="infor-people-name">-->
+<!--                    Sam Worthington-->
+<!--                  </div>-->
+<!--                  <div class="infor-people">-->
+<!--                    Samuel Henry J. "Sam" Worthington là một diễn viên người Úc. Anh được biết đến với vai Jake Sully trong Avatar-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <div class="content-avatar">-->
+<!--                <div class="detail-avatar">-->
+<!--                  <img class="img-people" src="https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg" />-->
+<!--                  <div class="infor-people-name">-->
+<!--                    Sam Worthington-->
+<!--                  </div>-->
+<!--                  <div class="infor-people">-->
+<!--                    Samuel Henry J. "Sam" Worthington là một diễn viên người Úc. Anh được biết đến với vai Jake Sully trong Avatar-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <div class="content-avatar">-->
+<!--                <div class="detail-avatar">-->
+<!--                  <img class="img-people" src="https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg" />-->
+<!--                  <div class="infor-people-name">-->
+<!--                    Sam Worthington-->
+<!--                  </div>-->
+<!--                  <div class="infor-people">-->
+<!--                    Samuel Henry J. "Sam" Worthington là một diễn viên người Úc. Anh được biết đến với vai Jake Sully trong Avatar-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
             </div>
           </div>
         </div>

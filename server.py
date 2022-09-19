@@ -348,18 +348,28 @@ def leaves():
 @app.route("/menu", methods=["GET", "POST"])
 @login_required
 def menu():
-    url = '/static/images/default.jpg'
     session = sessionFactory()
     uInfo = get_user_by_id(session, current_user.id)
     if uInfo['image'] is not None:
-        url = s3.generate_presigned_url(ClientMethod='get_object',
+        profile = s3.generate_presigned_url(ClientMethod='get_object',
                                     Params={'Bucket': app.config['AWS_BUCKET'], 'Key': uInfo['image']})
+    else:
+        profile = '/static/images/default.jpg'
+    users = get_all_user(session)
+    for user in users:
+
+        if user['image'] is not None:
+            user['image'] = s3.generate_presigned_url(ClientMethod='get_object',
+                                        Params={'Bucket': app.config['AWS_BUCKET'], 'Key': user['image']})
+        else:
+            user['image'] = '/static/images/default.jpg'
+
     admin = current_user.is_admin
     userType = 'User'
     if admin is True:
         userType = 'Administrator'
     session.close()
-    return render_template('dashboard.html', admin=current_user.is_admin, user=current_user.username, userType=userType, profile=url)
+    return render_template('dashboard.html', admin=current_user.is_admin, user=current_user.username, userType=userType, profile=profile, users=users)
 
 @app.route('/logout')
 def logout():
