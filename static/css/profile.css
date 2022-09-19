@@ -1,0 +1,29 @@
+.section-avatar{
+    margin-top: 40px ;
+  }
+  .content-avatar{
+    margin: 32px;
+  }
+  .img-people{
+    width:100px;
+    height:100px;
+    border-radius:100px;
+    border: 1px solid black;
+    margin: 0 auto;
+    display: block;
+    margin-bottom: 16px;
+    object-fit : cover;
+  }
+    .infor-people{
+    text-align:center;
+    font-size: 16px;
+  }
+  .infor-people-name{
+    text-align:center;
+    font-size: 18px;
+    font-weight: 600;
+
+  }
+  .detail-avatar{
+    width: 450px;
+  }

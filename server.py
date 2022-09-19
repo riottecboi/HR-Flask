@@ -45,6 +45,11 @@ engine = create_engine(mysql_string, pool_pre_ping=True, echo=False,
 sessionFactory = sessionmaker(bind=engine)
 Base.metadata.create_all(engine)
 
+s3 = boto3.client('s3',
+                  aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'],
+                  aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY']
+                  )
+
 @login.user_loader
 def user_loader(username):
     session = sessionFactory()
@@ -129,10 +134,6 @@ def editprofile():
             filename = None
             if form.phone.data == '':
                 form.phone.data = None
-            s3 = boto3.client('s3',
-                              aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'],
-                              aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY']
-                              )
             file = request.files.get('profile')
             if file.filename != '':
                 filename = secure_filename(file.filename)
@@ -166,22 +167,23 @@ def editprofile():
 @login_required
 @admin_only
 def employee():
+    url = '/static/images/default.jpg'
     form = AddUser()
     session = sessionFactory()
+    uInfo = get_user_by_id(session, current_user.id)
+    if uInfo['image'] is not None:
+        url = s3.generate_presigned_url(ClientMethod='get_object',
+                                        Params={'Bucket': app.config['AWS_BUCKET'], 'Key': uInfo['image']})
     try:
         users = get_all_user(session)
         if request.method == 'POST':
             filename = None
-            s3 = boto3.client('s3',
-                              aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'],
-                              aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY']
-                              )
             password = form.password.data
             confirm =form.confirm.data
             if password != confirm:
                 session.close()
                 flash("Password not match", "error")
-                return render_template('employee.html', users=users, username=current_user.username, form=form)
+                return render_template('employee.html', users=users, username=current_user.username, form=form, profile=url)
 
             authentication = UserAuthentication(username=form.username.data)
             if form.phone.data == '':
@@ -222,7 +224,7 @@ def employee():
             flash("Adding user successful", "info")
             return redirect(url_for('employee'))
         session.close()
-        return render_template('employee.html', admin=current_user.is_admin, users=users, username=current_user.username, form=form)
+        return render_template('employee.html', admin=current_user.is_admin, users=users, username=current_user.username, form=form, profile=url)
     except Exception as e:
         session.rollback()
         session.close()
@@ -233,7 +235,12 @@ def employee():
 @app.route("/payroll", methods=["GET", "POST"])
 @login_required
 def payroll():
+    url = '/static/images/default.jpg'
     session = sessionFactory()
+    uInfo = get_user_by_id(session, current_user.id)
+    if uInfo['image'] is not None:
+        url = s3.generate_presigned_url(ClientMethod='get_object',
+                                        Params={'Bucket': app.config['AWS_BUCKET'], 'Key': uInfo['image']})
     form = PaySlip()
     try:
         if request.method == 'POST':
@@ -255,7 +262,7 @@ def payroll():
         else:
             payrolls = get_payroll_by_user(session, current_user.id)
         session.close()
-        return render_template('payroll.html', admin=current_user.is_admin,  payrolls=payrolls, form=form)
+        return render_template('payroll.html', admin=current_user.is_admin,  payrolls=payrolls, form=form, profile=url)
     except Exception as e:
         session.rollback()
         session.close()
@@ -290,12 +297,17 @@ def submitform():
 @app.route("/leave", methods=['GET'])
 @login_required
 def leave():
+    url = '/static/images/default.jpg'
     session = sessionFactory()
+    uInfo = get_user_by_id(session, current_user.id)
+    if uInfo['image'] is not None:
+        url = s3.generate_presigned_url(ClientMethod='get_object',
+                                        Params={'Bucket': app.config['AWS_BUCKET'], 'Key': uInfo['image']})
     try:
         if current_user.is_admin is False:
             submitform = SubmitLeaveForm()
             history = get_leave_form_history_by_user(session, current_user.id)
-            return render_template('leave.html', form=submitform, records=history)
+            return render_template('leave.html', form=submitform, records=history, profile=url)
         else:
             return redirect(url_for('leaves'))
     except Exception as e:
@@ -308,8 +320,13 @@ def leave():
 @login_required
 @admin_only
 def leaves():
+    url = '/static/images/default.jpg'
     form = LeaveForm()
     session = sessionFactory()
+    uInfo = get_user_by_id(session, current_user.id)
+    if uInfo['image'] is not None:
+        url = s3.generate_presigned_url(ClientMethod='get_object',
+                                        Params={'Bucket': app.config['AWS_BUCKET'], 'Key': uInfo['image']})
     if request.method == 'POST':
         try:
             leaveid = request.form.get('leaveid')
@@ -324,17 +341,25 @@ def leaves():
             flash('Could not update form', 'error')
         return redirect(url_for('leaves'))
     all_leaves = get_user_leave(session)
-    return render_template('leaves.html', form=form, leaves=all_leaves)
+    session.close()
+    return render_template('leaves.html', form=form, leaves=all_leaves, profile=url)
 
 
 @app.route("/menu", methods=["GET", "POST"])
 @login_required
 def menu():
+    url = '/static/images/default.jpg'
+    session = sessionFactory()
+    uInfo = get_user_by_id(session, current_user.id)
+    if uInfo['image'] is not None:
+        url = s3.generate_presigned_url(ClientMethod='get_object',
+                                    Params={'Bucket': app.config['AWS_BUCKET'], 'Key': uInfo['image']})
     admin = current_user.is_admin
     userType = 'User'
     if admin is True:
         userType = 'Administrator'
-    return render_template('dashboard.html', admin=current_user.is_admin, user=current_user.username, userType=userType)
+    session.close()
+    return render_template('dashboard.html', admin=current_user.is_admin, user=current_user.username, userType=userType, profile=url)
 
 @app.route('/logout')
 def logout():
