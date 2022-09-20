@@ -24,7 +24,7 @@
         </header>
         <nav class="dashboard-nav-list">
           <a href="{{url_for('menu')}}" class="dashboard-nav-item">
-            <i class="fas fa-home"></i> Home </a>
+             Portfolio </a>
 <!--          <a href="#" class="dashboard-nav-item">-->
 <!--            <i class="fas fa-file-upload"></i> Upload </a>-->
 <!--          <div class='dashboard-nav-dropdown'>-->
@@ -40,7 +40,7 @@
           {% if admin is sameas true %}
           <div class='dashboard-nav-dropdown'>
             <a href="{{url_for('employee')}}" class="dashboard-nav-item ">
-              <i class="fas fa-users"></i> Employees </a>
+               Employees </a>
 <!--            <div class='dashboard-nav-dropdown-menu'>-->
 <!--              <a href="#" class="dashboard-nav-dropdown-item">All</a>-->
 <!--              <a href="#" class="dashboard-nav-dropdown-item">Subscribed</a>-->
@@ -52,19 +52,19 @@
           {% endif %}
           <div class='dashboard-nav-dropdown'>
             <a href="{{url_for('payroll')}}" class="dashboard-nav-item active">
-              <i class="fas fa-money-check-alt"></i> Payroll </a>
+             Payroll </a>
 
           </div>
           <div class='dashboard-nav-dropdown'>
             <a href="{{url_for('leave')}}" class="dashboard-nav-item">
-              <i class="fas fa-money-check-alt"></i> Leave </a>
+               Leave </a>
 
           </div>
           <a href="#" class="dashboard-nav-item">
-            <i class="fas fa-user"></i> Profile </a>
+             Profile </a>
           <div class="nav-item-divider"></div>
           <a href="{{url_for('logout')}}" class="dashboard-nav-item">
-            <i class="fas fa-sign-out-alt"></i> Logout </a>
+             Logout </a>
         </nav>
       </div>
       <div class='dashboard-app'>
