@@ -131,23 +131,51 @@ def editprofile():
     session = sessionFactory()
     try:
         if 'edit' in request.args:
-            filename = None
+            profile = None
+            resume = None
+            certificate = None
             if form.phone.data == '':
                 form.phone.data = None
-            file = request.files.get('profile')
-            if file.filename != '':
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            pr = request.files.get('edit_profile')
+            if pr.filename != '':
+                filename = secure_filename(pr.filename)
+                pr.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 s3.upload_file(
                     Filename=app.config['TMP_PATH'] + '/' + filename,
                     Bucket=app.config['AWS_BUCKET'],
-                    Key=filename,
+                    Key='profile-{}'.format(form.firstname.data),
                 )
+                profile = 'profile-{}'.format(form.firstname.data)
+                os.remove(app.config['TMP_PATH'] + '/' + filename)
+                # url = s3.generate_presigned_url(ClientMethod='get_object', Params={'Bucket': app.config['AWS_BUCKET'],'Key': filename})
+
+            re = request.files.get('edit_resume')
+            if re.filename != '':
+                filename = secure_filename(re.filename)
+                re.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                s3.upload_file(
+                    Filename=app.config['TMP_PATH'] + '/' + filename,
+                    Bucket=app.config['AWS_BUCKET'],
+                    Key='resume-{}'.format(form.firstname.data),
+                )
+                resume = 'resume-{}'.format(form.firstname.data)
+                os.remove(app.config['TMP_PATH'] + '/' + filename)
+
+            ce = request.files.get('edit_certificate')
+            if ce.filename != '':
+                filename = secure_filename(ce.filename)
+                ce.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                s3.upload_file(
+                    Filename=app.config['TMP_PATH'] + '/' + filename,
+                    Bucket=app.config['AWS_BUCKET'],
+                    Key='certificate-{}'.format(form.firstname.data),
+                )
+                certificate = 'certificate-{}'.format(form.firstname.data)
                 os.remove(app.config['TMP_PATH'] + '/' + filename)
                 # url = s3.generate_presigned_url(ClientMethod='get_object', Params={'Bucket': app.config['AWS_BUCKET'],'Key': filename})
             session.query(User).filter(User.id == request.args.get('edit')).update(
                 {'firstname': form.firstname.data, 'lastname': form.lastname.data,
-                 'age': form.age.data, 'phone': form.phone.data, 'image': filename,
+                 'age': form.age.data, 'phone': form.phone.data, 'image': profile, 'certificate': certificate, 'resume': resume, 'self_intro': form.self_intro.data,
                  'email': form.email.data, 'jobtitle': form.position.data, 'primaryskills': form.skills.data, 'department': form.department.data, 'location': form.location.data})
             session.commit()
             session.close()
@@ -197,9 +225,9 @@ def employee():
                 s3.upload_file(
                     Filename=app.config['TMP_PATH'] + '/' + filename,
                     Bucket=app.config['AWS_BUCKET'],
-                    Key='profile-{}'.format(current_user.username),
+                    Key='profile-{}'.format(form.username.data),
                 )
-                profile = 'Profile-{}'.format(current_user.username)
+                profile = 'profile-{}'.format(form.username.data)
                 os.remove(app.config['TMP_PATH'] + '/' + filename)
                 # url = s3.generate_presigned_url(ClientMethod='get_object', Params={'Bucket': app.config['AWS_BUCKET'],'Key': filename})
 
@@ -210,9 +238,9 @@ def employee():
                 s3.upload_file(
                     Filename=app.config['TMP_PATH'] + '/' + filename,
                     Bucket=app.config['AWS_BUCKET'],
-                    Key='resume-{}'.format(current_user.username),
+                    Key='resume-{}'.format(form.username.data),
                 )
-                resume = 'Resume-{}'.format(current_user.username)
+                resume = 'resume-{}'.format(form.username.data)
                 os.remove(app.config['TMP_PATH'] + '/' + filename)
 
             ce = request.files.get('certificate')
@@ -222,9 +250,9 @@ def employee():
                 s3.upload_file(
                     Filename=app.config['TMP_PATH'] + '/' + filename,
                     Bucket=app.config['AWS_BUCKET'],
-                    Key='certificate-{}'.format(current_user.username),
+                    Key='certificate-{}'.format(form.username.data),
                 )
-                certificate = 'Certificate-{}'.format(current_user.username)
+                certificate = 'certificate-{}'.format(form.username.data)
                 os.remove(app.config['TMP_PATH'] + '/' + filename)
 
             user = User(email=form.email.data, firstname=form.firstname.data, image=profile, certificate=certificate, resume=resume, self_intro=form.self_intro.data,
@@ -250,6 +278,21 @@ def employee():
             session.close()
             flash("Adding user successful", "info")
             return redirect(url_for('employee'))
+        for user in users:
+
+            if user['certificate'] is not None and user['certificate'] != '':
+                user['certificate'] = s3.generate_presigned_url(ClientMethod='get_object',
+                                                          Params={'Bucket': app.config['AWS_BUCKET'],
+                                                                  'Key': user['certificate']})
+            else:
+                user['certificate'] = 'None'
+
+            if user['resume'] is not None and user['resume'] !='':
+                user['resume'] = s3.generate_presigned_url(ClientMethod='get_object',
+                                                          Params={'Bucket': app.config['AWS_BUCKET'],
+                                                                  'Key': user['resume']})
+            else:
+                user['resume'] = 'None'
         session.close()
         return render_template('employee.html', admin=current_user.is_admin, users=users, username=current_user.username, form=form, profile=url)
     except Exception as e:
