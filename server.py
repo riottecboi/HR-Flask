@@ -131,9 +131,10 @@ def editprofile():
     session = sessionFactory()
     try:
         if 'edit' in request.args:
-            profile = None
-            resume = None
-            certificate = None
+            u = get_user_by_id(session, request.args.get('edit'))
+            profile = u['image']
+            resume = u['resume']
+            certificate = u['certificate']
             if form.phone.data == '':
                 form.phone.data = None
             pr = request.files.get('edit_profile')

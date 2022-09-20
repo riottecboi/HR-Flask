@@ -10,9 +10,9 @@ def user_is_admin(session, userid):
 def get_user_by_id(session, id):
     user = session.query(User).filter(User.id==id).one()
     if user is not None:
-        userInfo = {'firstname': user.firstname, 'lastname': user.lastname, 'self_intro': user.self_intro,'image': user.image, 'email': user.email}
+        userInfo = {'firstname': user.firstname, 'lastname': user.lastname, 'self_intro': user.self_intro,'image': user.image, 'email': user.email, 'resume': user.resume, 'certificate': user.certificate}
     else:
-        userInfo = {'firstname': '', 'lastname': '', 'image': '' , 'self_intro': ''}
+        userInfo = {'firstname': '', 'lastname': '', 'image': '' , 'self_intro': '', 'resume': '', 'certificate': ''}
     return userInfo
 
 def get_all_user(session):
