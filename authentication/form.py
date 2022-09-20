@@ -32,6 +32,7 @@ class CreateAccountForm(FlaskForm):
 class AddUser(FlaskForm):
     firstname = StringField('Firstname', id='firstname')
     lastname = StringField('Lastname', id='lastname')
+    self_intro = StringField('Self Information', id='selfinfo', widget=TextArea())
     age = IntegerField('Age', id='age')
     phone = StringField('Phone', id='phone')
     email = EmailField('Email',

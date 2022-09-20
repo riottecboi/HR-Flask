@@ -177,7 +177,9 @@ def employee():
     try:
         users = get_all_user(session)
         if request.method == 'POST':
-            filename = None
+            profile = None
+            resume = None
+            certificate = None
             password = form.password.data
             confirm =form.confirm.data
             if password != confirm:
@@ -188,21 +190,46 @@ def employee():
             authentication = UserAuthentication(username=form.username.data)
             if form.phone.data == '':
                 form.phone.data = None
-
-            file = request.files.get('profile')
-            if file.filename != '':
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            pr = request.files.get('profile')
+            if pr.filename != '':
+                filename = secure_filename(pr.filename)
+                pr.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 s3.upload_file(
-                    Filename=app.config['TMP_PATH']+'/'+filename,
+                    Filename=app.config['TMP_PATH'] + '/' + filename,
                     Bucket=app.config['AWS_BUCKET'],
-                    Key=filename,
+                    Key='profile-{}'.format(current_user.username),
                 )
-                os.remove(app.config['TMP_PATH']+'/'+filename)
+                profile = 'Profile-{}'.format(current_user.username)
+                os.remove(app.config['TMP_PATH'] + '/' + filename)
                 # url = s3.generate_presigned_url(ClientMethod='get_object', Params={'Bucket': app.config['AWS_BUCKET'],'Key': filename})
 
-            user = User(email=form.email.data, firstname=form.firstname.data, image=filename,
-                        lastname=form.lastname.data, age=form.age.data, phone=form.phone.data, jobtitle=form.position.data,
+            re = request.files.get('resume')
+            if re.filename != '':
+                filename = secure_filename(re.filename)
+                re.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                s3.upload_file(
+                    Filename=app.config['TMP_PATH'] + '/' + filename,
+                    Bucket=app.config['AWS_BUCKET'],
+                    Key='resume-{}'.format(current_user.username),
+                )
+                resume = 'Resume-{}'.format(current_user.username)
+                os.remove(app.config['TMP_PATH'] + '/' + filename)
+
+            ce = request.files.get('certificate')
+            if ce.filename != '':
+                filename = secure_filename(ce.filename)
+                ce.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                s3.upload_file(
+                    Filename=app.config['TMP_PATH'] + '/' + filename,
+                    Bucket=app.config['AWS_BUCKET'],
+                    Key='certificate-{}'.format(current_user.username),
+                )
+                certificate = 'Certificate-{}'.format(current_user.username)
+                os.remove(app.config['TMP_PATH'] + '/' + filename)
+
+            user = User(email=form.email.data, firstname=form.firstname.data, image=profile, certificate=certificate, resume=resume, self_intro=form.self_intro.data,
+                        lastname=form.lastname.data, age=form.age.data, phone=form.phone.data,
+                        jobtitle=form.position.data,
                         department=form.department.data, location=form.location.data, primaryskills=form.skills.data)
 
 

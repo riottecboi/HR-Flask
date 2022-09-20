@@ -10,9 +10,9 @@ def user_is_admin(session, userid):
 def get_user_by_id(session, id):
     user = session.query(User).filter(User.id==id).one()
     if user is not None:
-        userInfo = {'firstname': user.firstname, 'lastname': user.lastname, 'image': user.image}
+        userInfo = {'firstname': user.firstname, 'lastname': user.lastname, 'self_intro': user.self_intro,'image': user.image, 'resume': user.resume, 'certificate': user.certificate}
     else:
-        userInfo = {'firstname': '', 'lastname': '', 'image': ''}
+        userInfo = {'firstname': '', 'lastname': '', 'image': '' , 'self_intro': '', 'resume': '', 'certificate': ''}
     return userInfo
 
 def get_all_user(session):
@@ -22,7 +22,7 @@ def get_all_user(session):
         for user in users:
             admin = user_is_admin(session, user.userid)
             if not admin:
-                user_list.append({'id': user.id, 'firstname': user.firstname, 'lastname': user.lastname, 'image': user.image,
+                user_list.append({'id': user.id, 'firstname': user.firstname, 'lastname': user.lastname, 'image': user.image, 'resume': user.resume, 'certificate': user.certificate, 'self_intro': user.self_intro,
                               'age': user.age, 'phone': user.phone, 'email': user.email, 'position': user.jobtitle, 'skill': user.primaryskills,
                               'department': user.department, 'location': user.location})
     return user_list

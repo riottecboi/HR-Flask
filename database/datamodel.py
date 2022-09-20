@@ -60,10 +60,13 @@ class User(Base):
     phone = Column(BigInteger, unique=True, index=True)
     email = Column(String(128), unique=True, index=True)
     jobtitle = Column(String(64))
+    self_intro = Column(String(255))
     department = Column(String(128))
     primaryskills = Column(Text)
     location = Column(String(255))
     image = Column(String(255), index=True)
+    resume = Column(String(255), index=True)
+    certificate = Column(String(255), index=True)
 
 class Leave(Base):
     __tablename__ = 'leave'
