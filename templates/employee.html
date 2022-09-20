@@ -130,7 +130,7 @@
                         <label for="lastname">Last Name</label>
                     </div>
                     <div class="form-label-group">
-                    {{ form.self_intro(class_="select_box", style="width: 303px", placeholder="Self Introduction") }}
+                        <textarea name="self_intro" class="select_box" style="width: 303px" placeholder="Describe yourself here..."></textarea>
                     </div>
                     <div class="form-label-group">
                         {{ form.age(id="age", class_="form-control", style="width: 303px",placeholder="Age") }}
@@ -246,7 +246,8 @@
                             <label for="lastname">Last Name</label>
                         </div>
                         <div class="form-label-group">
-                            {{ form.self_intro(class_="select_box", style="width: 303px", value=user['self_intro'], placeholder="Self Introduction") }}
+                            <textarea name="self_intro" class="select_box" style="width: 303px" placeholder="Describe yourself here..."> {{user['self_intro']}}</textarea>
+
                         </div>
                         <div class="form-label-group">
                             {{ form.age(id="age", class_="form-control", style="width: 303px", placeholder="Age", value=user['age']) }}

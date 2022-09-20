@@ -176,7 +176,7 @@ def editprofile():
                 # url = s3.generate_presigned_url(ClientMethod='get_object', Params={'Bucket': app.config['AWS_BUCKET'],'Key': filename})
             session.query(User).filter(User.id == request.args.get('edit')).update(
                 {'firstname': form.firstname.data, 'lastname': form.lastname.data,
-                 'age': form.age.data, 'phone': form.phone.data, 'image': profile, 'certificate': certificate, 'resume': resume, 'self_intro': form.self_intro.data,
+                 'age': form.age.data, 'phone': form.phone.data, 'image': profile, 'certificate': certificate, 'resume': resume, 'self_intro': request.form.get('self_intro'),
                  'email': form.email.data, 'jobtitle': form.position.data, 'primaryskills': form.skills.data, 'department': form.department.data, 'location': form.location.data})
             session.commit()
             session.close()
@@ -256,7 +256,7 @@ def employee():
                 certificate = 'certificate-{}'.format(form.username.data)
                 os.remove(app.config['TMP_PATH'] + '/' + filename)
 
-            user = User(email=form.email.data, firstname=form.firstname.data, image=profile, certificate=certificate, resume=resume, self_intro=form.self_intro.data,
+            user = User(email=form.email.data, firstname=form.firstname.data, image=profile, certificate=certificate, resume=resume, self_intro=request.form.get('self_intro'),
                         lastname=form.lastname.data, age=form.age.data, phone=form.phone.data,
                         jobtitle=form.position.data,
                         department=form.department.data, location=form.location.data, primaryskills=form.skills.data)
