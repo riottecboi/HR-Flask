@@ -4,45 +4,141 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link href="{{url_for('static', filename='css/dashboard.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/profile.css')}}" rel="stylesheet">
     <link href="{{url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
     <link href="{{url_for('static', filename='css/modal.css')}}" rel="stylesheet">
     <link href="{{url_for('static', filename='css/style.css')}}" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   </head>
   <style>
-
-  //css cua nhu 
-  
-  .section-avatar{
-    margin-top: 40px ;
-  }
-  .content-avatar{
-    margin: 32px;
-  }
-  .img-people{
-    width:100px;
-    height:100px;
-    border-radius:100px;
-    border: 1px solid black;
-    margin: 0 auto;
-    display: block;
-    margin-bottom: 16px;
-    object-fit : cover;
-  }
-
-  .infor-people{
-    text-align:center;
-    font-size: 16px;
-  }
-  .infor-people-name{
-    text-align:center;
-    font-size: 18px;
-    font-weight: 600;
-
-  }
-  .detail-avatar{
-    width: 450px;
-  }
+    /* css-profile */
+    .profile-user{
+      padding:40px
+    }
+    .title-profile{
+      font-weight:bold;
+      font-size:26px;
+      color:black;
+    }
+    .content-profile{
+      border:1px solid #dddddd;
+      border-radius:6px;
+      margin-top: 20px;
+    }
+    .sub-title{
+      font-weight:bold;
+      font-size:20px;
+      color:black;
+      margin:20px
+    }
+    .line{
+      height:1px;
+      width: 100%;
+      background-color:#dddddd;
+    }
+    .user{
+      display:flex;
+      justify-content: space-between;
+      margin-right:150px;
+      margin:20px 300px 20px 20px; 
+      align-items: center;
+    }
+    .user-name{
+      display:flex;
+      justify-content: space-between;
+      margin-right:150px;
+      margin:20px 300px 20px 20px; 
+      align-items: center;
+    }
+    .profile-app-right{
+      display:flex;
+      justify-content: space-between;
+      margin-right:150px;
+      margin:20px 300px 20px 20px; 
+      align-items: center;
+    }
+    .user-company{
+      display:flex;
+      justify-content: space-between;
+      margin-right:150px;
+      margin:20px 300px 20px 20px; 
+      align-items: center;
+    }
+    .company-right{
+      display:flex;
+      justify-content: space-between;
+      margin-right:150px;
+      margin:20px 300px 20px 20px; 
+      align-items: center;
+    }
+    .reset-password{
+      display:flex;
+      justify-content: space-between;
+      margin-right:150px;
+      margin:20px 145px 20px 20px; 
+      align-items: center;
+    }
+    .input-current{
+      padding:10px;
+      border-radius:4px;
+      border: 1px solid #dddddd;
+      margin: 15px 0px;
+    }
+    .line-pw{
+      width:5px;
+      height:200px;
+      background-color:#DCDCDC;
+    }
+    .text-request{
+      font-weight:bold;
+      color: black;
+    }
+    .impor-request{
+      color:red;
+      font-weight: normal;
+    }
+    .btn-save{
+      display: flex;
+      justify-content: end;
+      margin-right: 20px;
+      margin-bottom: 20px;
+    }
+    .style-btn{
+      background-color:#191970;
+      padding: 15px;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size:18px;
+    }
+    .pw-old{
+      display:flex;
+      justify-content: space-between;
+      margin-right:150px;
+      margin:20px 300px 20px 20px; 
+      align-items: center;
+    }
+    .last-login{
+      display:flex;
+      justify-content: space-between;
+      margin-right:150px;
+      margin:20px 300px 20px 20px; 
+      align-items: center;
+    }
+    .profile-picrure{
+      display:flex;
+      justify-content: space-between;
+      margin-right:150px;
+      margin:20px 300px 20px 20px; 
+      align-items: center;
+    }
+    .detail-profile-picture img{ 
+      width: 100px;
+      height: 100px;
+      border-radius: 100px;
+      border: 1px solid black;
+    } 
   </style>
   <body>
     <div class='dashboard'>
@@ -305,7 +401,87 @@
                     </div>
                   </div>
                 </div>
+                // profile page
+                <div class="profile-user">
+                  <div class="title-profile">My Profile</div>
+                  <div class="content-profile">
+                    <div class="sub-title">My Profile</div>
+                    <div class="line"></div>
+                    <div class="main-content">
+                      <div class="user">
+                        <div class="user-id">User ID :</div>
+                        <div class="user-number">10</div>
+                      </div>
+                      <div class="line"></div>
+                      <div class="user-name">
+                        <div class="title-name">User Name :</div>
+                        <div class="detail-name">Nhu ne</div>
+                      </div>
+                      <div class="line"></div>
+                      <div class="profile-app-right">
+                        <div class="title-app-right">App Right :</div>
+                        <div class="detail-name">ETMS-NORMAL USER[EMPLOYEE] <br>
+                          ETMS-NORMAL USER[EMPLOYEE] <br>
+                          ETMS-NORMAL USER[EMPLOYEE] <br>
+                        </div>
+                      </div>
+                      <div class="line"></div>
+                      <div class="user-company">
+                        <div class="title-company">User Company :</div>
+                        <div class="detail-company"></div>
+                      </div>
+                      <div class="line"></div>
+                      <div class="company-right">
+                        <div class="title-company-right">Company Rights :</div>
+                        <div class="detail-company-right"></div>
+                      </div>
+                      <div class="line"></div>
+                      <div class="reset-password">
+                        <div class="title-reset">Reset Password :</div>
+                        <div class="detail-option-reset">
+                          <label for="currentpw">Current Password : <br>
+                            <input  class="input-current" type="password" id="currentpw" name="currentpw">
+                          </label>
+                          <br>
+                          <label for="newpw">New Password : <br>
+                            <input  class="input-current" type="password" id="newpw" name="newpw">
+                          </label>
+                          <br>
+                          <label for="re-newpw">Re-Enter New Password : <br>
+                            <input  class="input-current" type="password" id="re-newpw" name="re-newpw">
+                          </label>
+                        </div>
+                        <div class="line-pw"></div>
+                        <div class="text-request">You password to must :
+                          <div class="impor-request">Be 8 to 20 characters long. <br>Contain atleast one lower-case letter.<br>Cotain atleast one upper-case letter.<br>Cotain atleast one number.<br> Coyain atleast one special character: ~! @ 3 $ % 6 & * () - =</div>
+                        </div>
+                      </div>
+                      <div class="btn-save">
+                        <button class="style-btn">Save Password</button>
+                      </div>
+                      <div class="line"></div>
+                      <div class="pw-old">
+                        <div class="title-pw-old">Password Days old :</div>
+                        <div class="detail-pw-old">0</div>
+                      </div>
+                      <div class="line"></div>
+                      <div class="last-login">
+                        <div class="title-last-login">Last Login:</div>
+                        <div class="detail-last-login">21-09-2022 22:34:45 PM</div>
+                      </div>
+                      <div class="line"></div>
+                      <div class="profile-picrure">
+                        <div class="title-profile-picture">Profile Picture:</div>
+                        <div class="detail-profile-picture">
+                          <img src="https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg"/>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                </div>
               </div>
+              
             </div>
           </div>
           <script>
