@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link href="{{url_for('static', filename='css/dashboard.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/profile.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/modal.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/style.css')}}" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js"></script>
+
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
+    </script>
+      <script src="/static/js/chartRender.js"></script>
+  </head>
+  <body onload="renderReport()">
+    <div class='dashboard'>
+      <div class="dashboard-nav">
+        <header>
+          <a href="#!" class="menu-toggle">
+            <i class="fas fa-bars"></i>
+          </a>
+          <a href="#" class="brand-logo">
+            <img style="margin-right: 20px" class="img-people" src="{{profile}}" />
+          </a>
+        </header>
+        <nav class="dashboard-nav-list">
+          {% if admin is sameas true %}
+          <a href="{{url_for('statistics')}}" class="dashboard-nav-item">
+             Dashboard </a>
+          <div class='dashboard-nav-dropdown'>
+            <a href="{{url_for('employee')}}" class="dashboard-nav-item">
+              Employees </a>
+          </div>
+          {% endif %}
+          <div class='dashboard-nav-dropdown'>
+            <a href="{{url_for('payroll')}}" class="dashboard-nav-item ">
+               Payroll </a>
+          </div>
+          <div class='dashboard-nav-dropdown'>
+            {% if admin is sameas true %}
+            <a href="{{url_for('leaves')}}" class="dashboard-nav-item">
+             Leave </a>
+            {% else %}
+            <a href="{{url_for('leave')}}" class="dashboard-nav-item">Leave</a>
+            {% endif %}
+
+          </div>
+<!--          <a href="#" class="dashboard-nav-item">-->
+<!--            Profile </a>-->
+          <a href="{{url_for('menu')}}" class="dashboard-nav-item">
+             About us </a>
+          <div class="nav-item-divider"></div>
+          <a href="{{url_for('logout')}}" class="dashboard-nav-item">
+            Logout </a>
+        </nav>
+      </div>
+      <div class='dashboard-app'>
+        <header class='dashboard-toolbar'>
+          <a href="{{url_for('menu')}}" class="menu-toggle" style="width: 70px">
+            Dashboard</i>
+          </a>
+        </header>
+        <div class='dashboard-content'>
+          <div class='container'>
+            {% for category, message in get_flashed_messages(with_categories=True) %}
+              <div class="alert alert-{{category}}">{{ message }}</div>
+            {% endfor %}
+            <script>
+                setTimeout(function() {
+                    $(".alert").fadeOut('fast');
+                }, 3000);
+            </script>
+              <div class="section-avatar" style="margin-top:40px; display: flex; flex-wrap:wrap">
+                <div class="content-avatar">
+                    <div class="detail-avatar">
+                        <img class="img-people" src="https://cdn-icons-png.flaticon.com/512/622/622848.png" />
+                        <div class="infor-people-name">
+                            TOTAL EMPLOYEES
+                        </div>
+                        <div class="infor-people">
+                            {{users}} persons
+                        </div>
+                    </div>
+                </div>
+                <div class="content-avatar">
+                    <div class="detail-avatar">
+                        <img class="img-people" src="https://www.clipartmax.com/png/middle/153-1539051_payroll-tax-icon-payroll-icon-transparent.png" />
+                        <div class="infor-people-name">
+                            TOTAL PAYROLL
+                        </div>
+                        <div class="infor-people">
+                            RM{{totalPayroll}}
+                        </div>
+                    </div>
+                </div>
+                 <div class="content-avatar">
+                    <div class="detail-avatar">
+                        <img class="img-people" src="https://media.istockphoto.com/vectors/calendar-with-cross-mark-flat-icon-completed-task-time-to-deadline-vector-id1221902449?k=20&m=1221902449&s=612x612&w=0&h=XiuHrw_FotPVonxtuIzq4dvAJWOmp27icE1Tkbg0TQU=" />
+                        <div class="infor-people-name">
+                            TOTAL ANNUAL LEAVE
+                        </div>
+                        <div class="infor-people">
+                            {{annualLeaves}}%
+                        </div>
+                    </div>
+                </div>
+<!--                <div class="content-avatar">-->
+<!--                    <div class="detail-avatar">-->
+
+<!--                    </div>-->
+<!--                </div>-->
+            </div>
+            <div class='card'>
+                <div class='card-header'>
+                    <h3>Payroll chart</h3>
+                </div>
+                <div class='card-body'>
+                    <canvas id="payrollchart" style="width:100%;max-width:700px"></canvas>
+                </div>
+
+            </div>
+            <div class="card">
+                <div class='card-header'>
+                    <h3>Leave chart</h3>
+                </div>
+                <div class='card-body'>
+                    <canvas id="annualchart" style="width:100%;max-width:700px"></canvas>
+                </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const mobileScreen = window.matchMedia("(max-width: 990px )");
+      $(document).ready(function() {
+        $(".dashboard-nav-dropdown-toggle").click(function() {
+          $(this).closest(".dashboard-nav-dropdown").toggleClass("show").find(".dashboard-nav-dropdown").removeClass("show");
+          $(this).parent().siblings().removeClass("show");
+        });
+        $(".menu-toggle").click(function() {
+          if (mobileScreen.matches) {
+            $(".dashboard-nav").toggleClass("mobile-show");
+          } else {
+            $(".dashboard").toggleClass("dashboard-compact");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -54,8 +54,12 @@
 
           </div>
           <div class='dashboard-nav-dropdown'>
-            <a href="{{url_for('leave')}}" class="dashboard-nav-item active">
-               Leave </a>
+            {% if admin is sameas true %}
+            <a href="{{url_for('leaves')}}" class="dashboard-nav-item">
+             Leave </a>
+            {% else %}
+            <a href="{{url_for('leave')}}" class="dashboard-nav-item">Leave</a>
+            {% endif %}
 
           </div>
 

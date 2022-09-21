@@ -60,8 +60,8 @@ class PaySlip(FlaskForm):
     payrate = FloatField('Pay rate', id='payrate')
 
 class SubmitLeaveForm(FlaskForm):
-    type = SelectField('Leave Type', id='types', choices=[('Annual Leave', 'Annual Leave'), ('Emergency Leave', 'Emergency Leave'),
-                                                          ('Sick Leave', 'Sick Leave'), ('Maternity Leave', 'Maternity Leave')])
+    type = SelectField('Leave Type', id='types', choices=[('Annual Leave', 'Annual Leave'),
+                                                          ('Sick Leave', 'Sick Leave'),  ('Unpaid Leave', 'Unpaid Leave')])
     description = StringField('Description', id='description', widget=TextArea())
 
 

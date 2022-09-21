@@ -92,3 +92,10 @@ class Payroll(Base):
     overTime = Column(Float)
     totalPayRate = Column(Float)
     payDate = Column(DateTime)
+
+class TotalAnnualLeave(Base):
+    __tablename__ = 'annualleave'
+    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
+    userid = Column(Integer, index=True)
+    days = Column(Integer)
+    year = Column(Integer)

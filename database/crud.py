@@ -1,5 +1,5 @@
 from database.datamodel import *
-
+from datetime import datetime
 def user_is_admin(session, userid):
     user = session.query(UserAuthentication.is_admin).filter(UserAuthentication.id==userid).one()
     if user is not None:
@@ -8,7 +8,7 @@ def user_is_admin(session, userid):
         return False
 
 def get_user_by_id(session, id):
-    user = session.query(User).filter(User.id==id).one()
+    user = session.query(User).filter(User.userid==id).one()
     if user is not None:
         userInfo = {'firstname': user.firstname, 'lastname': user.lastname, 'self_intro': user.self_intro,'image': user.image, 'email': user.email, 'resume': user.resume, 'certificate': user.certificate}
     else:
@@ -22,7 +22,7 @@ def get_all_user(session):
         for user in users:
             admin = user_is_admin(session, user.userid)
             if not admin:
-                user_list.append({'id': user.id, 'firstname': user.firstname, 'lastname': user.lastname, 'image': user.image, 'resume': user.resume, 'certificate': user.certificate, 'self_intro': user.self_intro,
+                user_list.append({'id': user.userid, 'firstname': user.firstname, 'lastname': user.lastname, 'image': user.image, 'resume': user.resume, 'certificate': user.certificate, 'self_intro': user.self_intro,
                               'age': user.age, 'phone': user.phone, 'email': user.email, 'position': user.jobtitle, 'skill': user.primaryskills,
                               'department': user.department, 'location': user.location})
     return user_list
@@ -47,7 +47,7 @@ def get_user_leave(session):
     leaves = session.query(Leave).all()
     if leaves is not None and len(leaves) != 0:
         for leave in leaves:
-            leave_list.append({'id': leave.id, 'firstname': leave.firstname, 'lastname': leave.lastname,
+            leave_list.append({'id': leave.id, 'firstname': leave.firstname, 'lastname': leave.lastname, 'userid': leave.userid,
                                  'description': leave.description, 'startDate': leave.startDate, 'endDate': leave.endDate, 'status': leave.status
                               })
     return leave_list
@@ -64,6 +64,7 @@ def get_payroll_by_user(session, id):
     return payroll_list
 
 def get_leave_form_history_by_user(session, id):
+
     forms = []
     leave_form = session.query(Leave).filter(Leave.userid==id).all()
     if leave_form is not None and len(leave_form)!=0:
@@ -71,3 +72,16 @@ def get_leave_form_history_by_user(session, id):
             forms.append({'leave': leave.leavetype, 'description': leave.description, 'sdate': leave.startDate,
                           'edate': leave.endDate, 'status': leave.status})
     return forms
+
+def get_day_leave_left(session, userid, year):
+    day = session.query(TotalAnnualLeave.days).filter(TotalAnnualLeave.year==year).filter(TotalAnnualLeave.userid==userid).one()
+    totalDays = day.days
+    return totalDays
+
+def get_all_leave(session, year):
+    days = 0
+    check = session.query(TotalAnnualLeave.days).filter(TotalAnnualLeave.year==year).all()
+    if check is not None and len(check)!=0:
+        for day in check:
+            days = days + day.days
+    return days

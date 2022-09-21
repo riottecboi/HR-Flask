@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash, request
+from flask import Flask, render_template, redirect, url_for, flash, request, jsonify
 from flask_wtf.csrf import CSRFProtect
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 from flask_env import MetaFlaskEnv
@@ -10,12 +10,11 @@ from sqlalchemy.orm import sessionmaker
 from database.crud import *
 from database.datamodel import *
 from authentication.form import LoginForm, CreateAccountForm, AddUser, PaySlip, SubmitLeaveForm, LeaveForm
-from datetime import datetime
+from datetime import datetime, timedelta
 from functools import wraps
 
 import boto3
 import os
-import datetime
 
 class Configuration(metaclass=MetaFlaskEnv):
     SECRET_KEY = "supersecretkey"
@@ -36,6 +35,7 @@ except FileNotFoundError:
     app.config.from_object(Configuration)
 
 app.config['SESSION_COOKIE_SECURE']=True
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 app.config['UPLOAD_FOLDER'] = app.config['TMP_PATH']
 csrf = CSRFProtect(app)
 login = LoginManager(app)
@@ -53,9 +53,9 @@ s3 = boto3.client('s3',
 
 def last_day_of_month(any_day):
     # The day 28 exists in every month. 4 days later, it's always next month
-    next_month = any_day.replace(day=28) + datetime.timedelta(days=4)
+    next_month = any_day.replace(day=28) + timedelta(days=4)
     # subtracting the number of the current day brings us back one month
-    return next_month - datetime.timedelta(days=next_month.day)
+    return next_month - timedelta(days=next_month.day)
 
 @login.user_loader
 def user_loader(username):
@@ -181,10 +181,12 @@ def editprofile():
                 certificate = 'certificate-{}'.format(form.firstname.data)
                 os.remove(app.config['TMP_PATH'] + '/' + filename)
                 # url = s3.generate_presigned_url(ClientMethod='get_object', Params={'Bucket': app.config['AWS_BUCKET'],'Key': filename})
-            session.query(User).filter(User.id == request.args.get('edit')).update(
+            user = session.query(User).filter(User.userid == request.args.get('edit')).update(
                 {'firstname': form.firstname.data, 'lastname': form.lastname.data,
                  'age': form.age.data, 'phone': form.phone.data, 'image': profile, 'certificate': certificate, 'resume': resume, 'self_intro': request.form.get('self_intro'),
                  'email': form.email.data, 'jobtitle': form.position.data, 'primaryskills': form.skills.data, 'department': form.department.data, 'location': form.location.data})
+            session.commit()
+            session.query(Payroll).filter(Payroll.userid==request.args.get('edit')).update({'firstname': form.firstname.data, 'lastname': form.lastname.data})
             session.commit()
             session.close()
             flash('Updated user information successful', "info")
@@ -206,9 +208,10 @@ def employee():
     url = '/static/images/default.jpg'
     form = AddUser()
     session = sessionFactory()
-    uInfo = get_user_by_id(session, current_user.id)
-    if uInfo['image'] is not None:
-        url = s3.generate_presigned_url(ClientMethod='get_object',
+    if current_user.is_admin is False:
+        uInfo = get_user_by_id(session, current_user.id)
+        if uInfo['image'] is not None:
+            url = s3.generate_presigned_url(ClientMethod='get_object',
                                         Params={'Bucket': app.config['AWS_BUCKET'], 'Key': uInfo['image']})
     try:
         users = get_all_user(session)
@@ -315,9 +318,10 @@ def employee():
 def payroll():
     url = '/static/images/default.jpg'
     session = sessionFactory()
-    uInfo = get_user_by_id(session, current_user.id)
-    if uInfo['image'] is not None:
-        url = s3.generate_presigned_url(ClientMethod='get_object',
+    if current_user.is_admin is False:
+        uInfo = get_user_by_id(session, current_user.id)
+        if uInfo['image'] is not None:
+            url = s3.generate_presigned_url(ClientMethod='get_object',
                                         Params={'Bucket': app.config['AWS_BUCKET'], 'Key': uInfo['image']})
     form = PaySlip()
     try:
@@ -338,7 +342,7 @@ def payroll():
                 deduction = float((salary)/21)
                 session.query(Payroll).filter(Payroll.id==request.args.get('edit')).update({'basicSalary': salary, 'tax': round(tax, 2),
                                                                                                       'deduction': round(deduction, 2), 'overTime': overtime,
-                                                                                                      'totalPayRate': round(salary-(tax + deduction)), 'payDate': last_day_of_month(datetime.datetime.now())})
+                                                                                                      'totalPayRate': round(salary-(tax + deduction)), 'payDate': last_day_of_month(datetime.now())})
 
                 session.commit()
                 session.close()
@@ -352,8 +356,8 @@ def payroll():
             payrolls = get_payroll_by_user(session, current_user.id)
         for pay in payrolls:
             if pay['basicSalary'] is not None:
-                pay['payDate'] = last_day_of_month(datetime.datetime.now())
-                session.query(Payroll).filter(Payroll.id==pay['id']).update({'payDate': last_day_of_month(datetime.datetime.now())})
+                pay['payDate'] = last_day_of_month(datetime.now())
+                session.query(Payroll).filter(Payroll.id==pay['id']).update({'payDate': last_day_of_month(datetime.now())})
         session.commit()
         session.close()
         return render_template('payroll.html', admin=current_user.is_admin,  payrolls=payrolls, form=form, profile=url)
@@ -364,6 +368,7 @@ def payroll():
 
 @app.route('/submitform', methods=['POST'])
 def submitform():
+    now = datetime.now()
     session = sessionFactory()
     try:
         submitform = SubmitLeaveForm()
@@ -378,6 +383,18 @@ def submitform():
                           leavetype=leavetype, description=description, startDate=sdatedb, endDate=edatedb, status='pending')
         session.add(leaveform)
         session.commit()
+
+        if leavetype == 'Annual Leave' or leavetype == 'Sick Leave':
+            try:
+                getDays = get_day_leave_left(session, current_user.id, now.strftime("%Y"))
+                # session.query(TotalAnnualLeave).filter(TotalAnnualLeave.userid == current_user.id).update(
+                #     {'days': getDays + 1, 'year': now.strftime("%Y")})
+            except:
+                annualLeave = TotalAnnualLeave(userid=current_user.id, days=0, year=now.strftime("%Y"))
+                session.add(annualLeave)
+
+            session.commit()
+
         session.close()
         flash('Added leave form successful', 'info')
         return redirect(url_for('leave'))
@@ -415,17 +432,23 @@ def leave():
 @admin_only
 def leaves():
     url = '/static/images/default.jpg'
+    now = datetime.now()
     form = LeaveForm()
     session = sessionFactory()
-    uInfo = get_user_by_id(session, current_user.id)
-    if uInfo['image'] is not None:
-        url = s3.generate_presigned_url(ClientMethod='get_object',
-                                        Params={'Bucket': app.config['AWS_BUCKET'], 'Key': uInfo['image']})
+    if current_user.is_admin is False:
+        uInfo = get_user_by_id(session, current_user.id)
+        if uInfo['image'] is not None:
+            url = s3.generate_presigned_url(ClientMethod='get_object',
+                                            Params={'Bucket': app.config['AWS_BUCKET'], 'Key': uInfo['image']})
     if request.method == 'POST':
         try:
             leaveid = request.form.get('leaveid')
             status = form.status.data
-            session.query(Leave).filter(Leave.id==leaveid).update({'status': status})
+            if request.form.get('status') == 'approve':
+                getDays = get_day_leave_left(session, request.form.get('leaveuserid'), now.strftime("%Y"))
+                session.query(TotalAnnualLeave).filter(TotalAnnualLeave.userid == request.form.get('leaveuserid')).update(
+                    {'days': getDays + 1, 'year': now.strftime("%Y")})
+            session.query(Leave).filter(Leave.id==leaveid).update({'status': request.form.get('status')})
             session.commit()
             session.close()
             flash('Updated form successful', "info")
@@ -436,19 +459,21 @@ def leaves():
         return redirect(url_for('leaves'))
     all_leaves = get_user_leave(session)
     session.close()
-    return render_template('leaves.html', form=form, leaves=all_leaves, profile=url)
+    return render_template('leaves.html', admin=current_user.is_admin, form=form, leaves=all_leaves, profile=url, options=['pending', 'approve','decline'])
 
 
 @app.route("/menu", methods=["GET", "POST"])
 @login_required
 def menu():
+    profile = '/static/images/default.jpg'
     session = sessionFactory()
-    uInfo = get_user_by_id(session, current_user.id)
-    if uInfo['image'] is not None:
-        profile = s3.generate_presigned_url(ClientMethod='get_object',
-                                    Params={'Bucket': app.config['AWS_BUCKET'], 'Key': uInfo['image']})
-    else:
-        profile = '/static/images/default.jpg'
+    if current_user.is_admin is False:
+        uInfo = get_user_by_id(session, current_user.id)
+        if uInfo['image'] is not None:
+            profile = s3.generate_presigned_url(ClientMethod='get_object',
+                                        Params={'Bucket': app.config['AWS_BUCKET'], 'Key': uInfo['image']})
+        else:
+            profile = '/static/images/default.jpg'
     users = get_all_user(session)
     for user in users:
 
@@ -464,6 +489,62 @@ def menu():
         userType = 'Administrator'
     session.close()
     return render_template('dashboard.html', admin=current_user.is_admin, user=current_user.username, userType=userType, profile=profile, users=users)
+
+@app.route("/statistics", methods=["GET"])
+@login_required
+def statistics():
+    now = datetime.now()
+    totalPayroll = 0
+    profile = '/static/images/default.jpg'
+    session = sessionFactory()
+    if current_user.is_admin is False:
+        uInfo = get_user_by_id(session, current_user.id)
+        if uInfo['image'] is not None:
+            profile = s3.generate_presigned_url(ClientMethod='get_object',
+                                                Params={'Bucket': app.config['AWS_BUCKET'], 'Key': uInfo['image']})
+        else:
+            profile = '/static/images/default.jpg'
+    users = get_all_user(session)
+    payrolls = get_user_payroll(session)
+    for pay in payrolls:
+        totalPayroll = totalPayroll + pay['basicSalary']
+    totalAnnualleaves = len(users)*14
+    leaveTaken = get_all_leave(session, now.strftime("%Y"))
+    try:
+        annualLeaves = round((leaveTaken/totalAnnualleaves)*100, 2)
+    except:
+        annualLeaves = 0
+    return render_template('statistic.html', admin=current_user.is_admin, totalPayroll=totalPayroll, annualLeaves=annualLeaves,   profile=profile, users=len(users))
+
+
+@app.route("/payrollStatistic", methods=['GET'])
+@login_required
+def payrollStatistic():
+    json_ret = []
+    session = sessionFactory()
+    payrolls = get_user_payroll(session)
+    for pay in payrolls:
+        json_ret.append({'firstname': pay['firstname'], 'payroll': pay['basicSalary']})
+    session.close()
+    return jsonify(json_ret)
+
+@app.route("/annualLeaveStatistic", methods=['GET'])
+@login_required
+def annualLeaveStatistic():
+    now = datetime.now()
+    json_ret = []
+    session = sessionFactory()
+    users = get_all_user(session)
+    for user in users:
+        try:
+            dayUsed = get_day_leave_left(session, user['id'], now.strftime("%Y"))
+            if dayUsed>=14:
+                dayUsed=14
+        except:
+            dayUsed = 0
+        json_ret.append({'dayused': dayUsed, 'firstname': user['firstname']})
+    session.close()
+    return jsonify(json_ret)
 
 @app.route('/logout')
 def logout():

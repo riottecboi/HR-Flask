@@ -36,6 +36,8 @@
 <!--            </div>-->
 <!--          </div>-->
           <div class='dashboard-nav-dropdown'>
+            <a href="{{url_for('statistics')}}" class="dashboard-nav-item">
+             Dashboard </a>
             <a href="{{url_for('employee')}}" class="dashboard-nav-item">
                Employees </a>
 <!--            <div class='dashboard-nav-dropdown-menu'>-->
@@ -52,8 +54,12 @@
 
           </div>
           <div class='dashboard-nav-dropdown'>
-            <a href="{{url_for('leave')}}" class="dashboard-nav-item active">
-               Leave </a>
+                        {% if admin is sameas true %}
+            <a href="{{url_for('leaves')}}" class="dashboard-nav-item">
+             Leave </a>
+            {% else %}
+            <a href="{{url_for('leave')}}" class="dashboard-nav-item">Leave</a>
+            {% endif %}
 
           </div>
 
@@ -116,6 +122,7 @@
                           <form action="{{url_for('leaves')}}" method="post">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                             <input type="hidden" name="leaveid" value="{{ leave['id'] }}"/>
+                            <input type="hidden" name="leaveuserid" value="{{ leave['userid'] }}"/>
 
                             <p><b>Employee: {% if leave['firstname'] != None %}{{leave['firstname']}}{% endif %} {% if leave['lastname'] != None %}{{leave['lastname']}}{% endif %}</b></p>
                             <div class="form-label-group">
@@ -145,7 +152,15 @@
                             </div>
 
                             <div class="form-label-group">
-                              {{ form.status(class_="select_box", style="width: 400px", placeholder="Action") }}
+                              <select class="select_box" name="status" style="width: 400px">
+                                {% for option in options %}
+                                  {% if option == leave['status'] %}
+                                    <option disabled value="{{option}}">{{option}}</option>
+                                  {% else %}
+                                    <option value="{{option}}">{{option}}</option>
+                                  {% endif %}
+                                {% endfor %}
+                              </select>
                             </div>
                             <button class="btn btn-lg btn-primary btn-block btn-color-hover"
                                     style="margin-bottom:50px;height: 50px;width: 200px;color: whitesmoke;" type="submit">Submit</button>
