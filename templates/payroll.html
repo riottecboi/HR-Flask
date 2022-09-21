@@ -107,7 +107,7 @@
                   <th>First Name</th>
                   <th>Last Name</th>
                   <th>Basic Salary</th>
-                  <th>Tax</th>
+                  <th>EPF Contribute</th>
                   <th>Deduction</th>
                   <th>Overtime</th>
                   <th>Total Pay Rate</th>
@@ -133,33 +133,25 @@
 
                         <p><b>Employee: {% if payroll['firstname'] != None %}{{payroll['firstname']}}{% endif %} {% if payroll['lastname'] != None %}{{payroll['lastname']}}{% endif %}</b></p>
                         <div class="form-label-group">
-                            {{ form.salary( class_="form-control", placeholder="Basic Salary") }}
-                            <label for="salary">Basic Salary</label>
+
+                            <input type="number" id="salary_{{payroll['id']}}" name="salary" class="form-control" value="{% if payroll['basicSalary'] != None %}{{payroll['basicSalary']}}{% endif %}"/>
+                            <label for="salary_{{payroll['id']}}">Basic Salary</label>
                         </div>
 
                         <div class="form-label-group">
-                            {{ form.tax( class_="form-control", placeholder="Tax") }}
-                            <label for="tax">Tax</label>
+
+                            <input type="number" id="overtime_{{payroll['id']}}" name="overtime" class="form-control" value="{% if payroll['overTime'] != None %}{{payroll['overTime']}}{% endif %}"/>
+                            <label for="overtime_{{payroll['id']}}">Overtime</label>
                         </div>
 
                         <div class="form-label-group">
-                            {{ form.deduction( class_="form-control", placeholder="Deduction") }}
-                            <label for="deduction">Deduction</label>
+                            <input type="number" id="payrate_{{payroll['id']}}" name="payrate" class="form-control" value="{% if payroll['totalPayRate'] != None %}{{payroll['totalPayRate']}}{% endif %}"/>
+                            <label for="payrate_{{payroll['id']}}">Pay Rate</label>
                         </div>
-
-                        <div class="form-label-group">
-                            {{ form.overtime( class_="form-control", placeholder="Overtime") }}
-                            <label for="overtime">Overtime</label>
-                        </div>
-
-                        <div class="form-label-group">
-                            {{ form.payrate( class_="form-control", placeholder="Pay Rate") }}
-                            <label for="payrate">Pay Rate</label>
-                        </div>
-                        <div class="form-label-group">
-                            <input type="date" id="datepicker_{{payroll['id']}}" name="date" style="width: 227px"/>
-                            <label for="datepicker_{{payroll['id']}}">Date Pay</label>
-                        </div>
+<!--                        <div class="form-label-group">-->
+<!--                            <input type="date" id="datepicker_{{payroll['id']}}" name="date" style="width: 227px"/>-->
+<!--                            <label for="datepicker_{{payroll['id']}}">Date Pay</label>-->
+<!--                        </div>-->
 
                         <button class="btn btn-lg btn-primary btn-block btn-color-hover"
                                 style="margin-bottom:50px;height: 50px;width: 200px;color: whitesmoke;" type="submit">Submit</button>

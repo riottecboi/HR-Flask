@@ -15,6 +15,7 @@ from functools import wraps
 
 import boto3
 import os
+import datetime
 
 class Configuration(metaclass=MetaFlaskEnv):
     SECRET_KEY = "supersecretkey"
@@ -49,6 +50,12 @@ s3 = boto3.client('s3',
                   aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'],
                   aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY']
                   )
+
+def last_day_of_month(any_day):
+    # The day 28 exists in every month. 4 days later, it's always next month
+    next_month = any_day.replace(day=28) + datetime.timedelta(days=4)
+    # subtracting the number of the current day brings us back one month
+    return next_month - datetime.timedelta(days=next_month.day)
 
 @login.user_loader
 def user_loader(username):
@@ -316,11 +323,23 @@ def payroll():
     try:
         if request.method == 'POST':
             if 'edit' in request.args:
-                date = request.form.get('date')
-                datedb = datetime.strptime(date, '%Y-%m-%d')
-                session.query(Payroll).filter(Payroll.id==request.args.get('edit')).update({'basicSalary': form.salary.data, 'tax': form.tax.data,
-                                                                                                      'deduction': form.deduction.data, 'overTime': form.overtime.data,
-                                                                                                      'totalPayRate': form.payrate.data, 'payDate': datedb})
+                # date = request.form.get('date')
+                # datedb = datetime.strptime(date, '%Y-%m-%d')
+                salary = 0
+                overtime = 0
+                payrate = 0
+                if 'salary' in request.form:
+                    if request.form.get('salary') != '':
+                        salary = round(float(request.form.get('salary')), 2)
+                if 'overtime' in request.form:
+                    if request.form.get('overtime') != '':
+                        overtime = round(float(request.form.get('overtime')), 2)
+                if 'payrate' in request.form:
+                    if request.form.get('payrate') !='':
+                        payrate = round(float(request.form.get('payrate')), 2)
+                session.query(Payroll).filter(Payroll.id==request.args.get('edit')).update({'basicSalary': salary, 'tax': round(salary*0.12, 2),
+                                                                                                      'deduction': round((salary)/21, 2), 'overTime': overtime,
+                                                                                                      'totalPayRate': payrate, 'payDate': last_day_of_month(datetime.datetime.now())})
 
                 session.commit()
                 session.close()
@@ -332,6 +351,13 @@ def payroll():
             payrolls = get_user_payroll(session)
         else:
             payrolls = get_payroll_by_user(session, current_user.id)
+        for pay in payrolls:
+            if pay['basicSalary'] is not None:
+                pay['tax'] = round(pay['basicSalary']*0.12, 2)
+                pay['deduction'] = round((pay['basicSalary'])/21, 2)
+                pay['payDate'] = last_day_of_month(datetime.datetime.now())
+                session.query(Payroll).filter(Payroll.id==pay['id']).update({'payDate': last_day_of_month(datetime.datetime.now())})
+        session.commit()
         session.close()
         return render_template('payroll.html', admin=current_user.is_admin,  payrolls=payrolls, form=form, profile=url)
     except Exception as e:
