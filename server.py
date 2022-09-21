@@ -96,7 +96,7 @@ def login():
                 user.set_authenticated(session, True)
                 login_user(user)
                 session.close()
-                return redirect(url_for('menu'))
+                return redirect(url_for('statistics'))
         session.close()
         flash("Incorrect username/password", "error")
         return render_template('login.html', loginform=loginform, sigupform=sigupform)
