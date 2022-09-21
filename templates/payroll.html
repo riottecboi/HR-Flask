@@ -143,11 +143,6 @@
                             <input type="number" id="overtime_{{payroll['id']}}" name="overtime" class="form-control" value="{% if payroll['overTime'] != None %}{{payroll['overTime']}}{% endif %}"/>
                             <label for="overtime_{{payroll['id']}}">Overtime</label>
                         </div>
-
-                        <div class="form-label-group">
-                            <input type="number" id="payrate_{{payroll['id']}}" name="payrate" class="form-control" value="{% if payroll['totalPayRate'] != None %}{{payroll['totalPayRate']}}{% endif %}"/>
-                            <label for="payrate_{{payroll['id']}}">Pay Rate</label>
-                        </div>
 <!--                        <div class="form-label-group">-->
 <!--                            <input type="date" id="datepicker_{{payroll['id']}}" name="date" style="width: 227px"/>-->
 <!--                            <label for="datepicker_{{payroll['id']}}">Date Pay</label>-->
