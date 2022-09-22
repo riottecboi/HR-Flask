@@ -8,3 +8,4 @@ flask_login
 flask_sqlalchemy
 pymysql
 botocore
+arrow==1.2.3

@@ -277,7 +277,7 @@ def employee():
                         department=form.department.data, location=form.location.data, primaryskills=form.skills.data)
 
 
-            payroll = Payroll(firstname=user.firstname, lastname=user.lastname)
+            payroll = Payroll(firstname=user.firstname, lastname=user.lastname, payDate=last_day_of_month(datetime.now()))
 
             authentication.change_password(form.password.data)
             session.add(authentication)
@@ -373,32 +373,35 @@ def payroll():
 
 @app.route('/submitform', methods=['POST'])
 def submitform():
-    now = datetime.now()
+    import arrow
     session = sessionFactory()
     try:
         submitform = SubmitLeaveForm()
+        annualLeaveDays = session.query(AnnualLeaveDays).filter(
+            AnnualLeaveDays.userid ==current_user.id).one()
         sdate = request.form.get('sdate')
+        f_date = arrow.get(sdate)
         sdatedb = datetime.strptime(sdate, '%Y-%m-%d')
         edate = request.form.get('edate')
         edatedb = datetime.strptime(edate, '%Y-%m-%d')
+        t_date = arrow.get(edatedb)
+        minus = t_date - f_date
+        days = minus.days
         leavetype = submitform.type.data
+        if (leavetype == 'Annual Leave' and days > annualLeaveDays.annualleave) or (leavetype == 'Sick Leave' and days>annualLeaveDays.sickleave):
+            flash('Your picked over a permission days - Please try again')
+            return redirect(url_for('leave'))
+
+        # if leavetype == 'Unpaid Leave':
+        #     userPayroll = get_payroll_by_user(session, current_user.id)
+        #     session.query(Payroll).filter(Payroll.userid==current_user.id).update({'deduction': round(float(userPayroll['']))})
+
         description = submitform.description.data
         userInfo = get_user_by_id(session, current_user.id)
         leaveform = Leave(userid=current_user.id, firstname=userInfo['firstname'], lastname=userInfo['lastname'],
                           leavetype=leavetype, description=description, startDate=sdatedb, endDate=edatedb, status='pending')
         session.add(leaveform)
         session.commit()
-
-        if leavetype == 'Annual Leave' or leavetype == 'Sick Leave':
-            try:
-                getDays = get_day_leave_left(session, current_user.id, now.strftime("%Y"))
-                # session.query(TotalAnnualLeave).filter(TotalAnnualLeave.userid == current_user.id).update(
-                #     {'days': getDays + 1, 'year': now.strftime("%Y")})
-            except:
-                annualLeave = TotalAnnualLeave(userid=current_user.id, days=0, year=now.strftime("%Y"))
-                session.add(annualLeave)
-
-            session.commit()
 
         session.close()
         flash('Added leave form successful', 'info')
