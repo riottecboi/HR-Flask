@@ -39,7 +39,7 @@
             <a href="{{url_for('statistics')}}" class="dashboard-nav-item">
              Dashboard </a>
             <a href="{{url_for('employee')}}" class="dashboard-nav-item">
-               Employees </a>
+               Employee </a>
 <!--            <div class='dashboard-nav-dropdown-menu'>-->
 <!--              <a href="#" class="dashboard-nav-dropdown-item">All</a>-->
 <!--              <a href="#" class="dashboard-nav-dropdown-item">Subscribed</a>-->
@@ -55,10 +55,10 @@
           </div>
           <div class='dashboard-nav-dropdown'>
                         {% if admin is sameas true %}
-            <a href="{{url_for('leaves')}}" class="dashboard-nav-item">
+            <a href="{{url_for('leaves')}}" class="dashboard-nav-item active">
              Leave </a>
             {% else %}
-            <a href="{{url_for('leave')}}" class="dashboard-nav-item">Leave</a>
+            <a href="{{url_for('leave')}}" class="dashboard-nav-item active">Leave</a>
             {% endif %}
 
           </div>
@@ -96,6 +96,7 @@
                 <h3><b>Leave Applications</b></h3>
               </div>
               <div class='card-body'>
+                <p>All leave submission are showing here</p>
                 <div style="overflow-x: auto;margin-top: 10px">
                   <table>
                     <tr>

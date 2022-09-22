@@ -29,11 +29,11 @@
         </header>
         <nav class="dashboard-nav-list">
           {% if admin is sameas true %}
-          <a href="{{url_for('statistics')}}" class="dashboard-nav-item">
+          <a href="{{url_for('statistics')}}" class="dashboard-nav-item active">
              Dashboard </a>
           <div class='dashboard-nav-dropdown'>
             <a href="{{url_for('employee')}}" class="dashboard-nav-item">
-              Employees </a>
+              Employee </a>
           </div>
           {% endif %}
           <div class='dashboard-nav-dropdown'>
@@ -101,7 +101,7 @@
                     <div class="detail-avatar">
                         <img class="img-people" src="https://media.istockphoto.com/vectors/calendar-with-cross-mark-flat-icon-completed-task-time-to-deadline-vector-id1221902449?k=20&m=1221902449&s=612x612&w=0&h=XiuHrw_FotPVonxtuIzq4dvAJWOmp27icE1Tkbg0TQU=" />
                         <div class="infor-people-name">
-                            TOTAL ANNUAL LEAVE
+                            LEAVE RATE
                         </div>
                         <div class="infor-people">
                             {{annualLeaves}}%

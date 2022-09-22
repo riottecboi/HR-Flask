@@ -96,6 +96,8 @@ def login():
                 user.set_authenticated(session, True)
                 login_user(user)
                 session.close()
+                if user.is_admin is not True:
+                    return redirect(url_for('menu'))
                 return redirect(url_for('statistics'))
         session.close()
         flash("Incorrect username/password", "error")
@@ -181,7 +183,7 @@ def editprofile():
                 certificate = 'certificate-{}'.format(form.firstname.data)
                 os.remove(app.config['TMP_PATH'] + '/' + filename)
                 # url = s3.generate_presigned_url(ClientMethod='get_object', Params={'Bucket': app.config['AWS_BUCKET'],'Key': filename})
-            user = session.query(User).filter(User.userid == request.args.get('edit')).update(
+            session.query(User).filter(User.userid == request.args.get('edit')).update(
                 {'firstname': form.firstname.data, 'lastname': form.lastname.data,
                  'age': form.age.data, 'phone': form.phone.data, 'image': profile, 'certificate': certificate, 'resume': resume, 'self_intro': request.form.get('self_intro'),
                  'email': form.email.data, 'jobtitle': form.position.data, 'primaryskills': form.skills.data, 'department': form.department.data, 'location': form.location.data})
@@ -488,7 +490,7 @@ def menu():
     if admin is True:
         userType = 'Administrator'
     session.close()
-    return render_template('dashboard.html', admin=current_user.is_admin, user=current_user.username, userType=userType, profile=profile, users=users)
+    return render_template('about.html', admin=current_user.is_admin, user=current_user.username, userType=userType, profile=profile, users=users)
 
 @app.route("/statistics", methods=["GET"])
 @login_required
@@ -510,11 +512,8 @@ def statistics():
         totalPayroll = totalPayroll + pay['basicSalary']
     totalAnnualleaves = len(users)*14
     leaveTaken = get_all_leave(session, now.strftime("%Y"))
-    try:
-        annualLeaves = round((leaveTaken/totalAnnualleaves)*100, 2)
-    except:
-        annualLeaves = 0
-    return render_template('statistic.html', admin=current_user.is_admin, totalPayroll=totalPayroll, annualLeaves=annualLeaves,   profile=profile, users=len(users))
+    annualLeaves = round((leaveTaken/totalAnnualleaves)*100, 2)
+    return render_template('dashboards.html', admin=current_user.is_admin, totalPayroll=totalPayroll, annualLeaves=annualLeaves,   profile=profile, users=len(users))
 
 
 @app.route("/payrollStatistic", methods=['GET'])
@@ -536,12 +535,12 @@ def annualLeaveStatistic():
     session = sessionFactory()
     users = get_all_user(session)
     for user in users:
-        try:
-            dayUsed = get_day_leave_left(session, user['id'], now.strftime("%Y"))
-            if dayUsed>=14:
-                dayUsed=14
-        except:
-            dayUsed = 0
+        # try:
+        dayUsed = get_day_leave_left(session, user['id'], now.strftime("%Y"))
+        if dayUsed>=14:
+            dayUsed=14
+        # except:
+        #     dayUsed = 0
         json_ret.append({'dayused': dayUsed, 'firstname': user['firstname']})
     session.close()
     return jsonify(json_ret)

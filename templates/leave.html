@@ -38,7 +38,7 @@
           {% if admin is sameas true %}
           <div class='dashboard-nav-dropdown'>
             <a href="{{url_for('employee')}}" class="dashboard-nav-item">
-              Employees </a>
+              Employee </a>
 <!--            <div class='dashboard-nav-dropdown-menu'>-->
 <!--              <a href="#" class="dashboard-nav-dropdown-item">All</a>-->
 <!--              <a href="#" class="dashboard-nav-dropdown-item">Subscribed</a>-->
@@ -55,10 +55,10 @@
           </div>
           <div class='dashboard-nav-dropdown'>
             {% if admin is sameas true %}
-            <a href="{{url_for('leaves')}}" class="dashboard-nav-item">
+            <a href="{{url_for('leaves')}}" class="dashboard-nav-item active">
              Leave </a>
             {% else %}
-            <a href="{{url_for('leave')}}" class="dashboard-nav-item">Leave</a>
+            <a href="{{url_for('leave')}}" class="dashboard-nav-item active">Leave</a>
             {% endif %}
 
           </div>
