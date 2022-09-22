@@ -13,6 +13,16 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password',
                              id='pwd_login',
                              validators=[DataRequired()])
+class PasswordAuth(FlaskForm):
+    username = StringField('Username',
+                           id='username',
+                           validators=[DataRequired()])
+    password = PasswordField('Password',
+                             id='password',
+                             validators=[DataRequired()])
+    confirm = PasswordField('Confirm Password',
+                            id='confirm',
+                            validators=[DataRequired()])
 
 
 class CreateAccountForm(FlaskForm):
@@ -29,7 +39,7 @@ class CreateAccountForm(FlaskForm):
                              id='pwd_create',
                              validators=[DataRequired()])
 
-class AddUser(FlaskForm):
+class AddUser(PasswordAuth):
     firstname = StringField('Firstname', id='firstname')
     lastname = StringField('Lastname', id='lastname')
     self_intro = StringField('Self Information', id='selfinfo', widget=TextArea())
@@ -42,15 +52,25 @@ class AddUser(FlaskForm):
     department = StringField('Department', id='department')
     location = StringField('Location', id='location')
     skills = StringField('Skills', id='skill')
-    username = StringField('Username',
-                         id='username',
-                         validators=[DataRequired()])
-    password = PasswordField('Password',
-                             id='password',
-                             validators=[DataRequired()])
-    confirm = PasswordField('Confirm Password',
-                            id='confirm',
-                            validators=[DataRequired()])
+    annualleave = IntegerField('Annual Leave', id='annualleave', default=0)
+    sickleave = IntegerField('Sick Leave', id='sickleave', default=0)
+
+class EditUser(FlaskForm):
+    editfirstname = StringField('Firstname', id='firstname', description="First Name")
+    editlastname = StringField('Lastname', id='lastname')
+    editself_intro = StringField('Self Information', id='selfinfo', widget=TextArea())
+    editage = IntegerField('Age', id='age')
+    editphone = StringField('Phone', id='phone')
+    editemail = EmailField('Email',
+                       id='email',
+                       validators=[DataRequired(), Email()])
+    editposition = StringField('Position', id='position')
+    editdepartment = StringField('Department', id='department')
+    editlocation = StringField('Location', id='location')
+    editskills = StringField('Skills', id='skill')
+    editannualleave = IntegerField('Annual Leave', id='annualleave', default=0)
+    editsickleave = IntegerField('Sick Leave', id='sickleave', default=0)
+
 
 class PaySlip(FlaskForm):
     salary = FloatField('Basic salary', id='salary')

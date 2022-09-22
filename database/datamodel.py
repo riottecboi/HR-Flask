@@ -89,7 +89,7 @@ class Payroll(Base):
     basicSalary = Column(Float, default=0)
     tax = Column(Float, default=0)
     deduction = Column(Float, default=0)
-    overTime = Column(Float)
+    overTime = Column(Float, default=0)
     totalPayRate = Column(Float)
     payDate = Column(DateTime)
 
@@ -97,5 +97,13 @@ class TotalAnnualLeave(Base):
     __tablename__ = 'annualleave'
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
     userid = Column(Integer, index=True)
-    days = Column(Integer)
+    annualleaveday = Column(Integer, default=0)
+    sickleaveday = Column(Integer, default=0)
     year = Column(Integer)
+
+class AnnualLeaveDays(Base):
+    __tablename__ = 'annualleaveday'
+    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
+    userid = Column(Integer, index=True)
+    annualleave = Column(Integer, default=0)
+    sickleave = Column(Integer, default=0)

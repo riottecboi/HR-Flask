@@ -171,6 +171,14 @@
                         {{ form.skills(id="skill", class_="form-control", style="width: 303px",placeholder="Skills") }}
                         <label for="skill">Skills</label>
                     </div>
+                    <div class="form-label-group">
+                        {{ form.annualleave(id="annualleave", class_="form-control", style="width: 303px",placeholder="Annual Leave (days)") }}
+                        <label for="annualleave">Annual Leave (days)</label>
+                    </div>
+                    <div class="form-label-group">
+                        {{ form.sickleave(id="sickleave", class_="form-control", style="width: 303px",placeholder="Sick Leave (days)") }}
+                        <label for="sickleave">Sick Leave (days)</label>
+                    </div>
 
                     <hr>
                     <p><b>USER AUTHENTICATION</b></p>
@@ -232,61 +240,69 @@
 
                         <p><b>Employee: {% if user['firstname'] != None %}{{user['firstname']}}{% endif %} {% if user['lastname'] != None %}{{user['lastname']}}{% endif %}</b></p>
                         <div class="form-label-group">
-                            <input type="file" id="edit_profile" name="edit_profile">
+                            <input type="file" id="edit_profile_{{user['id']}}" name="edit_profile">
                             <label for="profile">Profile</label>
                         </div>
                         <div class="form-label-group">
-                            <input type="file" id="edit_resume" name="edit_resume">
+                            <input type="file" id="edit_resume_{{user['id']}}" name="edit_resume">
                             <label for="profile">Resume</label>
                         </div>
                         <div class="form-label-group">
-                            <input type="file" id="edit_certificate" name="edit_certificate">
+                            <input type="file" id="edit_certificate_{{user['id']}}" name="edit_certificate">
                             <label for="certificate">Certificate</label>
                         </div>
                         <div class="form-label-group">
-                        {{ form.firstname(id="firstname", class_="form-control", style="width: 303px", placeholder="First Name", value=user['firstname']) }}
-                        <label for="firstname">First Name</label>
+                        {{ editform.editfirstname(id=user['firstname'], class_="form-control", style="width: 303px", placeholder="First Name", value=user['firstname']) }}
+                        <label for="{{ user['firstname'] }}">First Name</label>
                         </div>
 
                         <div class="form-label-group">
-                            {{ form.lastname(id="lastname", class_="form-control", style="width: 303px", placeholder="Last Name", value=user['lastname']) }}
-                            <label for="lastname">Last Name</label>
+                            {{ editform.editlastname(id="lastname", class_="form-control", style="width: 303px", placeholder="Last Name", value=user['lastname']) }}
+                            <label for="{{ user['lastname'] }}">Last Name</label>
                         </div>
                         <div class="form-label-group">
                             <textarea name="self_intro" class="select_box" style="width: 303px" placeholder="Describe yourself here..."> {{user['self_intro']}}</textarea>
 
                         </div>
                         <div class="form-label-group">
-                            {{ form.age(id="age", class_="form-control", style="width: 303px", placeholder="Age", value=user['age']) }}
-                            <label for="age">Age</label>
+                            {{ editform.editage(id="age", class_="form-control", style="width: 303px", placeholder="Age", value=user['age']) }}
+                            <label for="{{ user['age'] }}">Age</label>
                         </div>
 
                         <div class="form-label-group">
-                            {{ form.phone(id="phone", class_="form-control", style="width: 303px", placeholder="Phone", value=user['phone']) }}
-                            <label for="phone">Phone</label>
+                            {{ editform.editphone(id="phone", class_="form-control", style="width: 303px", placeholder="Phone", value=user['phone']) }}
+                            <label for="{{ user['phone'] }}">Phone</label>
                         </div>
                         <div class="form-label-group">
-                            {{ form.email(id="email", class_="form-control", style="width: 303px",placeholder="Email", required=True, value=user['email']) }}
-                            <label for="email">Email</label>
-                        </div>
-
-                        <div class="form-label-group">
-                            {{ form.position(id="position", class_="form-control", style="width: 303px",placeholder="Position", value=user['position']) }}
-                            <label for="position">Position</label>
+                            {{ editform.editemail(id="email", class_="form-control", style="width: 303px",placeholder="Email", required=True, value=user['email']) }}
+                            <label for="{{ user['email'] }}">Email</label>
                         </div>
 
                         <div class="form-label-group">
-                            {{ form.department(id="department", class_="form-control", style="width: 303px",placeholder="Department", value=user['department']) }}
-                            <label for="department">Department</label>
+                            {{ editform.editposition(id="position", class_="form-control", style="width: 303px",placeholder="Position", value=user['position']) }}
+                            <label for="{{ user['position'] }}">Position</label>
                         </div>
 
                         <div class="form-label-group">
-                            {{ form.location(id="location", class_="form-control", style="width: 303px",placeholder="Location", value=user['location']) }}
-                            <label for="location">Location</label>
+                            {{ editform.editdepartment(id="department", class_="form-control", style="width: 303px",placeholder="Department", value=user['department']) }}
+                            <label for="{{ user['department'] }}">Department</label>
+                        </div>
+
+                        <div class="form-label-group">
+                            {{ editform.editlocation(id="location", class_="form-control", style="width: 303px",placeholder="Location", value=user['location']) }}
+                            <label for="{{ user['location'] }}">Location</label>
                         </div>
                         <div class="form-label-group">
-                            {{ form.skills(id="skill", class_="form-control", style="width: 303px", placeholder="Skills", value=user['skill']) }}
-                            <label for="skill">Skills</label>
+                            {{ editform.editskills(id="skill", class_="form-control", style="width: 303px", placeholder="Skills", value=user['skill']) }}
+                            <label for="{{ user['skill'] }}">Skills</label>
+                        </div>
+                        <div class="form-label-group">
+                            {{ editform.editannualleave(id="annualleave", class_="form-control", style="width: 303px",placeholder="Annual Leave (days)") }}
+                            <label for="annualleave">Annual Leave (days)</label>
+                        </div>
+                        <div class="form-label-group">
+                            {{ editform.editsickleave(id="sickleave", class_="form-control", style="width: 303px",placeholder="Sick Leave (days)") }}
+                            <label for="sickleave">Sick Leave (days)</label>
                         </div>
 
                         <button class="btn btn-lg btn-primary btn-block btn-color-hover"

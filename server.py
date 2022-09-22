@@ -9,7 +9,7 @@ from sqlalchemy.orm import sessionmaker
 
 from database.crud import *
 from database.datamodel import *
-from authentication.form import LoginForm, CreateAccountForm, AddUser, PaySlip, SubmitLeaveForm, LeaveForm
+from authentication.form import *
 from datetime import datetime, timedelta
 from functools import wraps
 
@@ -136,7 +136,7 @@ def signup():
 @app.route("/editprofile", methods=['POST'])
 @login_required
 def editprofile():
-    form = AddUser()
+    form = EditUser()
     session = sessionFactory()
     try:
         if 'edit' in request.args:
@@ -144,8 +144,8 @@ def editprofile():
             profile = u['image']
             resume = u['resume']
             certificate = u['certificate']
-            if form.phone.data == '':
-                form.phone.data = None
+            if form.editphone.data == '':
+                form.editphone.data = None
             pr = request.files.get('edit_profile')
             if pr.filename != '':
                 filename = secure_filename(pr.filename)
@@ -153,9 +153,9 @@ def editprofile():
                 s3.upload_file(
                     Filename=app.config['TMP_PATH'] + '/' + filename,
                     Bucket=app.config['AWS_BUCKET'],
-                    Key='profile-{}'.format(form.firstname.data),
+                    Key='profile-{}'.format(form.editfirstname.data),
                 )
-                profile = 'profile-{}'.format(form.firstname.data)
+                profile = 'profile-{}'.format(form.editfirstname.data)
                 os.remove(app.config['TMP_PATH'] + '/' + filename)
                 # url = s3.generate_presigned_url(ClientMethod='get_object', Params={'Bucket': app.config['AWS_BUCKET'],'Key': filename})
 
@@ -166,9 +166,9 @@ def editprofile():
                 s3.upload_file(
                     Filename=app.config['TMP_PATH'] + '/' + filename,
                     Bucket=app.config['AWS_BUCKET'],
-                    Key='resume-{}'.format(form.firstname.data),
+                    Key='resume-{}'.format(form.editfirstname.data),
                 )
-                resume = 'resume-{}'.format(form.firstname.data)
+                resume = 'resume-{}'.format(form.editfirstname.data)
                 os.remove(app.config['TMP_PATH'] + '/' + filename)
 
             ce = request.files.get('edit_certificate')
@@ -178,17 +178,19 @@ def editprofile():
                 s3.upload_file(
                     Filename=app.config['TMP_PATH'] + '/' + filename,
                     Bucket=app.config['AWS_BUCKET'],
-                    Key='certificate-{}'.format(form.firstname.data),
+                    Key='certificate-{}'.format(form.editfirstname.data),
                 )
-                certificate = 'certificate-{}'.format(form.firstname.data)
+                certificate = 'certificate-{}'.format(form.editfirstname.data)
                 os.remove(app.config['TMP_PATH'] + '/' + filename)
                 # url = s3.generate_presigned_url(ClientMethod='get_object', Params={'Bucket': app.config['AWS_BUCKET'],'Key': filename})
             session.query(User).filter(User.userid == request.args.get('edit')).update(
-                {'firstname': form.firstname.data, 'lastname': form.lastname.data,
-                 'age': form.age.data, 'phone': form.phone.data, 'image': profile, 'certificate': certificate, 'resume': resume, 'self_intro': request.form.get('self_intro'),
-                 'email': form.email.data, 'jobtitle': form.position.data, 'primaryskills': form.skills.data, 'department': form.department.data, 'location': form.location.data})
+                {'firstname': form.editfirstname.data, 'lastname': form.editlastname.data,
+                 'age': form.editage.data, 'phone': form.editphone.data, 'image': profile, 'certificate': certificate, 'resume': resume, 'self_intro': request.form.get('self_intro'),
+                 'email': form.editemail.data, 'jobtitle': form.editposition.data, 'primaryskills': form.editskills.data, 'department': form.editdepartment.data, 'location': form.editlocation.data})
             session.commit()
-            session.query(Payroll).filter(Payroll.userid==request.args.get('edit')).update({'firstname': form.firstname.data, 'lastname': form.lastname.data})
+            session.query(Payroll).filter(Payroll.userid==request.args.get('edit')).update({'firstname': form.editfirstname.data, 'lastname': form.editlastname.data})
+            session.commit()
+            session.query(AnnualLeaveDays).filter(AnnualLeaveDays.userid == request.args.get('edit')).update({'annualleave': form.editannualleave.data, 'sickleave': form.editsickleave.data})
             session.commit()
             session.close()
             flash('Updated user information successful', "info")
@@ -209,6 +211,7 @@ def editprofile():
 def employee():
     url = '/static/images/default.jpg'
     form = AddUser()
+    editform = EditUser()
     session = sessionFactory()
     if current_user.is_admin is False:
         uInfo = get_user_by_id(session, current_user.id)
@@ -280,6 +283,10 @@ def employee():
             session.add(authentication)
             session.commit()
 
+            annualLeave = AnnualLeaveDays(userid=authentication.id, annualleave=form.annualleave.data, sickleave=form.sickleave.data)
+            session.add(annualLeave)
+            session.commit()
+
             user.userid = authentication.id
             session.add(user)
             session.commit()
@@ -307,7 +314,7 @@ def employee():
             else:
                 user['resume'] = 'None'
         session.close()
-        return render_template('employee.html', admin=current_user.is_admin, users=users, username=current_user.username, form=form, profile=url)
+        return render_template('employee.html', admin=current_user.is_admin, users=users, username=current_user.username, form=form, editform=editform, profile=url)
     except Exception as e:
         session.rollback()
         session.close()
@@ -333,7 +340,6 @@ def payroll():
                 # datedb = datetime.strptime(date, '%Y-%m-%d')
                 salary = 0
                 overtime = 0
-                payrate = 0
                 if 'salary' in request.form:
                     if request.form.get('salary') != '':
                         salary = round(float(request.form.get('salary')), 2)
@@ -341,10 +347,7 @@ def payroll():
                     if request.form.get('overtime') != '':
                         overtime = round(float(request.form.get('overtime')), 2)
                 tax = float(salary*0.12)
-                deduction = float((salary)/21)
-                session.query(Payroll).filter(Payroll.id==request.args.get('edit')).update({'basicSalary': salary, 'tax': round(tax, 2),
-                                                                                                      'deduction': round(deduction, 2), 'overTime': overtime,
-                                                                                                      'totalPayRate': round(salary-(tax + deduction)), 'payDate': last_day_of_month(datetime.now())})
+                session.query(Payroll).filter(Payroll.id==request.args.get('edit')).update({'basicSalary': salary, 'tax': round(tax, 2), 'overTime': overtime, 'totalPayRate': round(salary-(tax + Payroll.deduction)), 'payDate': last_day_of_month(datetime.now())})
 
                 session.commit()
                 session.close()

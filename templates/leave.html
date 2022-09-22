@@ -128,11 +128,11 @@
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                             <div class="form-label-group">
                                 <input type="date" id="start_datepicker" name="sdate" style="width: 400px"/>
-                                <label for="datepicker">Start Date</label>
+                                <label for="start_datepicker">Start Date</label>
                             </div>
                             <div class="form-label-group">
                                 <input type="date" id="end_datepicker" name="edate" style="width: 400px"/>
-                                <label for="datepicker">End Date</label>
+                                <label for="end_datepicker">End Date</label>
                             </div>
                             <div class="form-label-group">
                             {{ form.type(class_="select_box", style="width: 400px", placeholder="Leave Types") }}
