@@ -124,6 +124,7 @@
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                             <input type="hidden" name="leaveid" value="{{ leave['id'] }}"/>
                             <input type="hidden" name="leaveuserid" value="{{ leave['userid'] }}"/>
+                            <input type="hidden" name="leavetype" value="{{ leave['leavetype'] }}"/>
 
                             <p><b>Employee: {% if leave['firstname'] != None %}{{leave['firstname']}}{% endif %} {% if leave['lastname'] != None %}{{leave['lastname']}}{% endif %}</b></p>
                             <div class="form-label-group">
@@ -134,6 +135,11 @@
                             <div class="form-label-group">
                                 <input type="text" class="form-control" id="lastname" disabled style="width: 400px" value="{{leave['lastname']}}">
                                 <label for="lastname">Last Name</label>
+                            </div>
+
+                            <div class="form-label-group">
+                                <input type="text" class="form-control" id="leavetype" disabled style="width: 400px" value="{{leave['leavetype']}}">
+                                <label for="lastname">Leave Type</label>
                             </div>
 
                             <div class="form-label-group">

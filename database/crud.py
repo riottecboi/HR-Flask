@@ -47,7 +47,7 @@ def get_user_leave(session):
     leaves = session.query(Leave).all()
     if leaves is not None and len(leaves) != 0:
         for leave in leaves:
-            leave_list.append({'id': leave.id, 'firstname': leave.firstname, 'lastname': leave.lastname, 'userid': leave.userid,
+            leave_list.append({'id': leave.id, 'firstname': leave.firstname, 'lastname': leave.lastname, 'userid': leave.userid, 'leavetype': leave.leavetype,
                                  'description': leave.description, 'startDate': leave.startDate, 'endDate': leave.endDate, 'status': leave.status
                               })
     return leave_list
@@ -74,14 +74,31 @@ def get_leave_form_history_by_user(session, id):
     return forms
 
 def get_day_leave_left(session, userid, year):
-    day = session.query(TotalAnnualLeave.days).filter(TotalAnnualLeave.year==year).filter(TotalAnnualLeave.userid==userid).one()
-    totalDays = day.days
-    return totalDays
+    day = session.query(TotalAnnualLeave).filter(TotalAnnualLeave.year==year).filter(TotalAnnualLeave.userid==userid).one()
+    annualDays = day.annualleaveday
+    sickDays = day.sickleaveday
+    return annualDays, sickDays
 
 def get_all_leave(session, year):
-    days = 0
-    check = session.query(TotalAnnualLeave.days).filter(TotalAnnualLeave.year==year).all()
-    if check is not None and len(check)!=0:
-        for day in check:
-            days = days + day.days
-    return days
+    annualDays = 0
+    sickDays = 0
+    try:
+        check = session.query(TotalAnnualLeave.days).filter(TotalAnnualLeave.year==year).all()
+        if check is not None and len(check)!=0:
+            for day in check:
+                annualDays = annualDays + day.annualleaveday
+                sickDays = sickDays + day.sickleaveday
+    except Exception:
+        pass
+    return annualDays, sickDays
+
+def get_latest_payroll_by_userid(session, id):
+    userPayroll = {'id': '', 'firstname': '', 'lastname': '', 'basicSalary': '', 'tax': '', 'deduction': '',
+                   'overTime': '', 'totalPayRate': '', 'payDate': ''}
+    payroll = session.query(Payroll).filter(Payroll.userid==id).order_by(Payroll.payDate.desc()).limit(1).one()
+    if payroll is not None:
+        userPayroll = {'id': payroll.id, 'firstname': payroll.firstname, 'lastname': payroll.lastname,
+                             'basicSalary': payroll.basicSalary, 'tax': payroll.tax, 'deduction': payroll.deduction,
+                             'overTime': payroll.overTime,
+                             'totalPayRate': payroll.totalPayRate, 'payDate': payroll.payDate}
+    return userPayroll
