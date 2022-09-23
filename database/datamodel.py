@@ -99,6 +99,7 @@ class TotalAnnualLeave(Base):
     userid = Column(Integer, index=True)
     annualleaveday = Column(Integer, default=0)
     sickleaveday = Column(Integer, default=0)
+    unpaidleaveday = Column(Integer, default=0)
     year = Column(Integer)
 
 class AnnualLeaveDays(Base):

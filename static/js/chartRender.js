@@ -11,7 +11,8 @@ async function payroll() {
 
     try {
         var xValues = new Array();
-        var yValues = new Array();
+        var payrollValues = new Array();
+        var overtimeValues = new Array();
         var barColors = new Array();
         const response = await axios.get(`/payrollStatistic`);
         const results = response.data;
@@ -20,23 +21,34 @@ async function payroll() {
             xValues.push(
                 values.firstname
             );
-            yValues.push(
-                values.payroll
+            payrollValues.push(
+                values.payrollValues
+            );
+            overtimeValues.push(
+                values.overtimeValues
             );
             barColors.push(
                 getRandomColor()
             )
         });
         xValues.push('');
-        yValues.push('');
+        payrollValues.push('');
+        overtimeValues.push('');
 
         var data = {
             labels: xValues,
-            datasets: [{
-                label: 'Payroll Bar Chart',
-                data: yValues,
-                backgroundColor: barColors
-            }]
+            datasets: [
+                {
+                    label: 'Payroll',
+                    data: payrollValues,
+                    backgroundColor: "#caf270"
+                },
+                {
+                    label: 'Overtime',
+                    data: overtimeValues,
+                    backgroundColor: "#45c490"
+                }
+            ]
 
         };
 
@@ -57,7 +69,9 @@ async function annualLeave() {
 
     try {
         var xValues = new Array();
-        var yValues = new Array();
+        var annualDays = new Array();
+        var sickDays = new Array();
+        var unpaidDays = new Array();
         var barColors = new Array();
         const response = await axios.get(`/annualLeaveStatistic`);
         const results = response.data;
@@ -66,23 +80,43 @@ async function annualLeave() {
             xValues.push(
                 values.firstname
             );
-            yValues.push(
-                values.dayused
+            annualDays.push(
+                values.annualDays
+            );
+            sickDays.push(
+                values.sickDays
+            );
+            unpaidDays.push(
+                values.unpaidDays
             );
             barColors.push(
                 getRandomColor()
             )
         });
         xValues.push('');
-        yValues.push('');
+        annualDays.push('');
+        sickDays.push('');
+        unpaidDays.push('');
 
         var data = {
             labels: xValues,
-            datasets: [{
-                label: 'Total Leave Bar Chart',
-                data: yValues,
-                backgroundColor: barColors
-            }]
+            datasets: [
+                {
+                    label: 'Annual',
+                    data: annualDays,
+                    backgroundColor: "#2e5468"
+                },
+                {
+                    label: 'Sick',
+                    data: sickDays,
+                    backgroundColor: "#45c490"
+                },
+                {
+                    label: 'Unpaid',
+                    data: unpaidDays,
+                    backgroundColor: "#008d93"
+                }
+            ]
 
         };
 

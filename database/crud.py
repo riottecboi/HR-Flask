@@ -77,13 +77,14 @@ def get_day_leave_left(session, userid, year):
     day = session.query(TotalAnnualLeave).filter(TotalAnnualLeave.year==year).filter(TotalAnnualLeave.userid==userid).one()
     annualDays = day.annualleaveday
     sickDays = day.sickleaveday
-    return annualDays, sickDays
+    unpaidDays = day.unpaidleaveday
+    return annualDays, sickDays, unpaidDays
 
 def get_all_leave(session, year):
     annualDays = 0
     sickDays = 0
     try:
-        check = session.query(TotalAnnualLeave.days).filter(TotalAnnualLeave.year==year).all()
+        check = session.query(TotalAnnualLeave).filter(TotalAnnualLeave.year==year).all()
         if check is not None and len(check)!=0:
             for day in check:
                 annualDays = annualDays + day.annualleaveday

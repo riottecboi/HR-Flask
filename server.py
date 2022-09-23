@@ -348,7 +348,7 @@ def payroll():
                     if request.form.get('overtime') != '':
                         overtime = round(float(request.form.get('overtime')), 2)
                 tax = float(salary*0.12)
-                session.query(Payroll).filter(Payroll.id==request.args.get('edit')).update({'basicSalary': salary, 'tax': round(tax, 2), 'overTime': overtime, 'totalPayRate': salary-(tax + Payroll.deduction), 'payDate': last_day_of_month(datetime.now())})
+                session.query(Payroll).filter(Payroll.id==request.args.get('edit')).update({'basicSalary': salary, 'tax': round(tax, 2), 'overTime': overtime, 'totalPayRate': (salary + overtime)-(tax + Payroll.deduction), 'payDate': last_day_of_month(datetime.now())})
 
                 session.commit()
                 session.close()
@@ -458,51 +458,61 @@ def leaves():
         try:
             leaveid = request.form.get('leaveid')
             if request.form.get('status') == 'approve':
+                try:
+                    annualDays, sickDays, unpaidDays = get_day_leave_left(session, request.form.get('leaveuserid'),
+                                                              now.strftime("%Y"))
+                except Exception as e:
+                    newRow = TotalAnnualLeave(userid=request.form.get('leaveuserid'), year=now.strftime("%Y"))
+                    session.add(newRow)
+                    session.commit()
+                    annualDays = 0
+                    sickDays = 0
+                    unpaidDays = 0
                 if request.form.get('leavetype') == 'Unpaid Leave':
                     userPayroll = get_latest_payroll_by_userid(session, request.form.get('leaveuserid'))
                     lastdeduction = userPayroll['deduction']
                     deduction = lastdeduction + round(float(userPayroll['basicSalary'] / 21), 2)
-                    session.query(Payroll).filter(Payroll.userid == current_user.id).update({'deduction': deduction})
+                    session.query(Payroll).filter(Payroll.userid == request.form.get('leaveuserid')).update({'deduction': deduction})
+                    session.commit()
+                    session.query(TotalAnnualLeave).filter(
+                        TotalAnnualLeave.userid == request.form.get('leaveuserid')).update(
+                        {'unpaidleaveday': unpaidDays + 1})
                     session.commit()
                 else:
                     userAnnualleave = session.query(AnnualLeaveDays).filter(AnnualLeaveDays.userid == request.form.get('leaveuserid')).one()
+                    if request.form.get('leavetype') == 'Annual Leave':
+                        session.query(AnnualLeaveDays).filter(
+                            AnnualLeaveDays.userid == request.form.get('leaveuserid')).update(
+                            {'annualleave': userAnnualleave.annualleave - 1})
 
-                    try:
-                        annualDays, sickDays = get_day_leave_left(session, request.form.get('leaveuserid'), now.strftime("%Y"))
-                    except Exception as e:
-                        newRow = TotalAnnualLeave(userid=request.form.get('leaveuserid'), year=now.strftime("%Y"))
-                        session.add(newRow)
-                        session.commit()
-                        annualDays = 0
-                        sickDays = 0
-                    if request.form.get('leavetype') == 'Annual Leave' and userAnnualleave.annualleave !=0:
-                        annuLeave = userAnnualleave.annualleave - 1
-                        session.query(AnnualLeaveDays).filter(AnnualLeaveDays.userid == request.form.get('leaveuserid')).update({'annualleave': annuLeave})
                         session.commit()
                         session.query(TotalAnnualLeave).filter(
                             TotalAnnualLeave.userid == request.form.get('leaveuserid')).update(
                             {'annualleaveday': annualDays + 1})
                         session.commit()
-                    else:
-                        flash('User running out Annual Dayoff', "error")
-                        session.query(Leave).filter(Leave.id == leaveid).update({'status': 'decline'})
-                        session.commit()
-                        session.close()
-                        return redirect(url_for('leaves'))
-                    if request.form.get('leavetype') == 'Sick Leave' and  userAnnualleave.sickleave != 0:
-                        sickLeave = userAnnualleave.sickleave - 1
-                        session.query(AnnualLeaveDays).filter(AnnualLeaveDays.userid == request.form.get('leaveuserid')).update({'sickleave': sickLeave})
+                        
+                        if userAnnualleave.annualleave ==0:
+                            flash('User running out Annual Dayoff', "error")
+                            session.query(Leave).filter(Leave.id == leaveid).update({'status': 'decline'})
+                            session.commit()
+                            session.close()
+                            return redirect(url_for('leaves'))
+                    if request.form.get('leavetype') == 'Sick Leave':
+                        session.query(AnnualLeaveDays).filter(
+                            AnnualLeaveDays.userid == request.form.get('leaveuserid')).update(
+                            {'sickleave': userAnnualleave.sickleave - 1})
                         session.commit()
                         session.query(TotalAnnualLeave).filter(
                             TotalAnnualLeave.userid == request.form.get('leaveuserid')).update(
                             {'sickleaveday': sickDays + 1})
                         session.commit()
-                    else:
-                        flash('User running out Sick Dayoff', "error")
-                        session.query(Leave).filter(Leave.id == leaveid).update({'status': 'decline'})
-                        session.commit()
-                        session.close()
-                        return redirect(url_for('leaves'))
+
+                        if userAnnualleave.sickleave == 0:
+                            flash('User running out Sick Dayoff', "error")
+                            session.query(Leave).filter(Leave.id == leaveid).update({'status': 'decline'})
+                            session.commit()
+                            session.close()
+                            return redirect(url_for('leaves'))
             session.query(Leave).filter(Leave.id==leaveid).update({'status': request.form.get('status')})
             session.commit()
             session.close()
@@ -562,12 +572,12 @@ def statistics():
     users = get_all_user(session)
     payrolls = get_user_payroll(session)
     for pay in payrolls:
-        totalPayroll = totalPayroll + pay['basicSalary']
+        totalPayroll = totalPayroll + pay['totalPayRate'] if pay['totalPayRate'] is not None else totalPayroll
     totalAnnualleaves = len(users)*14
     annualDays,  sickDays= get_all_leave(session, now.strftime("%Y"))
     annualLeaves = round((annualDays/totalAnnualleaves)*100, 2) if annualDays != 0 else 0
     sickLeaves = round((sickDays / totalAnnualleaves) * 100, 2) if sickDays !=0 else 0
-    return render_template('dashboards.html', admin=current_user.is_admin, totalPayroll=totalPayroll, annualLeaves=annualLeaves,   profile=profile, users=len(users))
+    return render_template('dashboards.html', admin=current_user.is_admin, totalPayroll=totalPayroll, annualLeaves=annualLeaves, sickLeaves=sickLeaves, profile=profile, users=len(users))
 
 
 @app.route("/payrollStatistic", methods=['GET'])
@@ -577,7 +587,8 @@ def payrollStatistic():
     session = sessionFactory()
     payrolls = get_user_payroll(session)
     for pay in payrolls:
-        json_ret.append({'firstname': pay['firstname'], 'payroll': pay['basicSalary']})
+        pay['totalPayRate'] = pay['totalPayRate'] if pay['totalPayRate'] is not None else 0
+        json_ret.append({'firstname': pay['firstname'], 'payrollValues': pay['totalPayRate'], 'overtimeValues': pay['overTime']})
     session.close()
     return jsonify(json_ret)
 
@@ -589,13 +600,11 @@ def annualLeaveStatistic():
     session = sessionFactory()
     users = get_all_user(session)
     for user in users:
-        # try:
-        dayUsed = get_day_leave_left(session, user['id'], now.strftime("%Y"))
-        if dayUsed>=14:
-            dayUsed=14
-        # except:
-        #     dayUsed = 0
-        json_ret.append({'dayused': dayUsed, 'firstname': user['firstname']})
+        try:
+            annualDays, sickDays, unpaidDays = get_day_leave_left(session, user['id'], now.strftime("%Y"))
+        except Exception as e:
+            annualDays, sickDays, unpaidDays = 0, 0, 0
+        json_ret.append({'annualDays': annualDays, 'sickDays': sickDays, 'unpaidDays': unpaidDays, 'firstname': user['firstname']})
     session.close()
     return jsonify(json_ret)
 
