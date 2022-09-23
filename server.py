@@ -490,7 +490,7 @@ def leaves():
                             TotalAnnualLeave.userid == request.form.get('leaveuserid')).update(
                             {'annualleaveday': annualDays + 1})
                         session.commit()
-                        
+
                         if userAnnualleave.annualleave ==0:
                             flash('User running out Annual Dayoff', "error")
                             session.query(Leave).filter(Leave.id == leaveid).update({'status': 'decline'})
