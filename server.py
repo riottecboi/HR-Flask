@@ -581,7 +581,7 @@ def statistics():
     userType = 'User'
     if admin is True:
         userType = 'Administrator'
-    return render_template('dashboards.html', admin=current_user.is_admin, userType=userType, totalPayroll=totalPayroll, annualLeaves=annualLeaves, sickLeaves=sickLeaves, profile=profile, users=len(users))
+    return render_template('dashboards.html', admin=current_user.is_admin, userType=userType, totalPayroll=format(totalPayroll, '.2f'), annualLeaves=format(annualLeaves, '.2f'), sickLeaves=format(sickLeaves, '.2f'), profile=profile, users=len(users))
 
 
 @app.route("/payrollStatistic", methods=['GET'])
