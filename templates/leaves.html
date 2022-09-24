@@ -100,6 +100,7 @@
                       <th>Leave ID</th>
                       <th>First Name</th>
                       <th>Last Name</th>
+                      <th>Leave Type</th>
                       <th>Description</th>
                       <th>Start Date</th>
                       <th>End Date</th>
@@ -176,6 +177,7 @@
                       <td>{% if leave['id'] != None %}{{leave['id']}}{% endif %}</td>
                       <td>{% if leave['firstname'] != None %}{{leave['firstname']}}{% endif %}</td>
                       <td>{% if leave['lastname'] != None %}{{leave['lastname']}}{% endif %}</td>
+                      <td>{% if leave['leavetype'] != None %}{{leave['leavetype']}}{% endif %}</td>
                       <td>{% if leave['description'] != None %}{{leave['description']}}{% endif %}</td>
                       <td>{% if leave['startDate'] != None %}{{leave['startDate'].strftime('%d-%m-%Y')}}{% endif %}</td>
                       <td>{% if leave['endDate'] != None %}{{leave['endDate'].strftime('%d-%m-%Y')}}{% endif %}</td>
