@@ -299,7 +299,6 @@ def employee():
             flash("Adding user successful", "info")
             return redirect(url_for('employee'))
         for user in users:
-
             if user['certificate'] is not None and user['certificate'] != '':
                 user['certificate'] = s3.generate_presigned_url(ClientMethod='get_object',
                                                           Params={'Bucket': app.config['AWS_BUCKET'],
@@ -361,6 +360,9 @@ def payroll():
         else:
             payrolls = get_payroll_by_user(session, current_user.id)
         for pay in payrolls:
+            pay['basicSalary'] = format(pay['basicSalary'], '.2f')
+            pay['tax'] = format(pay['tax'], '.2f')
+            pay['overTime'] = format(pay['overTime'], '.2f')
             if pay['basicSalary'] is not None:
                 pay['payDate'] = last_day_of_month(datetime.now())
                 session.query(Payroll).filter(Payroll.id==pay['id']).update({'payDate': last_day_of_month(datetime.now())})
