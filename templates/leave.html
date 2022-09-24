@@ -106,8 +106,8 @@
                     <tr>
                       <td>{% if record['leave'] != None %}{{record['leave']}}{% endif %}</td>
                       <td>{% if record['description'] != None %}{{record['description']}}{% endif %}</td>
-                      <td>{% if record['sdate'] != None %}{{record['sdate']}}{% endif %}</td>
-                      <td>{% if record['edate'] != None %}{{record['edate']}}{% endif %}</td>
+                      <td>{% if record['sdate'] != None %}{{record['sdate'].strftime('%d-%m-%Y')}}{% endif %}</td>
+                      <td>{% if record['edate'] != None %}{{record['edate'].strftime('%d-%m-%Y')}}{% endif %}</td>
                       <td>{% if record['status'] != None %}{{record['status']}}{% endif %}</td>
                     </tr>
                     {% endfor %}

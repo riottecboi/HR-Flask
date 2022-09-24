@@ -294,11 +294,11 @@
                             <label for="{{ user['skill'] }}">Skills</label>
                         </div>
                         <div class="form-label-group">
-                            {{ editform.editannualleave(id="annualleave", class_="form-control", style="width: 303px",placeholder="Annual Leave (days)") }}
+                            {{ editform.editannualleave(id="annualleave", class_="form-control", style="width: 303px",placeholder="Annual Leave (days)", value=user['annual']) }}
                             <label for="annualleave">Annual Leave (days)</label>
                         </div>
                         <div class="form-label-group">
-                            {{ editform.editsickleave(id="sickleave", class_="form-control", style="width: 303px",placeholder="Sick Leave (days)") }}
+                            {{ editform.editsickleave(id="sickleave", class_="form-control", style="width: 303px",placeholder="Sick Leave (days)", value=user['sick']) }}
                             <label for="sickleave">Sick Leave (days)</label>
                         </div>
 

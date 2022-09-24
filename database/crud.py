@@ -22,9 +22,14 @@ def get_all_user(session):
         for user in users:
             admin = user_is_admin(session, user.userid)
             if not admin:
-                user_list.append({'id': user.userid, 'firstname': user.firstname, 'lastname': user.lastname, 'image': user.image, 'resume': user.resume, 'certificate': user.certificate, 'self_intro': user.self_intro,
-                              'age': user.age, 'phone': user.phone, 'email': user.email, 'position': user.jobtitle, 'skill': user.primaryskills,
-                              'department': user.department, 'location': user.location})
+                try:
+                    annualLeaveDays = session.query(AnnualLeaveDays).filter(
+                        AnnualLeaveDays.userid == user.userid).one()
+                    user_list.append({'id': user.userid, 'firstname': user.firstname, 'lastname': user.lastname, 'image': user.image, 'resume': user.resume, 'certificate': user.certificate, 'self_intro': user.self_intro,
+                                  'age': user.age, 'phone': user.phone, 'email': user.email, 'position': user.jobtitle, 'skill': user.primaryskills, 'annual': annualLeaveDays.annualleave, 'sick': annualLeaveDays.sickleave,
+                                  'department': user.department, 'location': user.location})
+                except:
+                    continue
     return user_list
 
 def get_user_payroll(session):
