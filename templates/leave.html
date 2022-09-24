@@ -127,11 +127,11 @@
                         <form action="{{url_for('submitform')}}" method="post">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                             <div class="form-label-group">
-                                <input type="date" id="start_datepicker" name="sdate" style="width: 400px"/>
+                                <input type="datetime"  id="date"  name="date" value ="YYYY/MM/DD" style="width: 400px"/>
                                 <label for="datepicker">Start Date</label>
                             </div>
                             <div class="form-label-group">
-                                <input type="date" id="end_datepicker" name="edate" style="width: 400px"/>
+                                <input type="datetime"  id="date-end"  name="date" value ="YYYY/MM/DD" style="width: 400px"/>
                                 <label for="datepicker">End Date</label>
                             </div>
                             <div class="form-label-group">
@@ -151,6 +151,12 @@
         </div>
       </div>
     </div>
+    <script>
+      $(function() {
+        $( "#date" ).datepicker({ dateFormat: 'yy-mm-dd' });
+        $( "#date-end" ).datepicker({ dateFormat: 'yy-mm-dd' });
+      }); 
+  </script>
     <script>
       const mobileScreen = window.matchMedia("(max-width: 990px )");
       $(document).ready(function() {
@@ -194,5 +200,8 @@
         }
       }
     </script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   </body>
 </html>

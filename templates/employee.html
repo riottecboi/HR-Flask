@@ -10,6 +10,17 @@
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 
   </head>
+  <style>
+      input[type="file"]::-webkit-file-upload-button{
+        background: linear-gradient(to right, #ff9472, #443ea2);
+        color:#ffffff;
+        padding:6px;
+        border: unset;
+        border-radius: 8px;
+        cursor:pointer;
+        margin-right:16px;
+      }
+  </style>
   <body>
     <div class='dashboard'>
       <div class="dashboard-nav">
@@ -116,6 +127,7 @@
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <p><b>USER INFORMATION</b></p>
                     <div class="form-label-group">
+                      
                         <input type="file" id="profile" name="profile">
                         <label for="profile">Profile</label>
                     </div>
