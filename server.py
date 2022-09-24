@@ -469,10 +469,12 @@ def leaves():
                     sickDays = 0
                     unpaidDays = 0
                 if request.form.get('leavetype') == 'Unpaid Leave':
+
                     userPayroll = get_latest_payroll_by_userid(session, request.form.get('leaveuserid'))
                     lastdeduction = userPayroll['deduction']
                     deduction = lastdeduction + round(float(userPayroll['basicSalary'] / 21), 2)
-                    session.query(Payroll).filter(Payroll.userid == request.form.get('leaveuserid')).update({'deduction': deduction})
+                    session.query(Payroll).filter(Payroll.userid == request.form.get('leaveuserid'))\
+                        .update({'deduction': deduction, 'totalPayRate': (userPayroll['basicSalary'] + userPayroll['overTime']) - (userPayroll['tax'] + deduction)})
                     session.commit()
                     session.query(TotalAnnualLeave).filter(
                         TotalAnnualLeave.userid == request.form.get('leaveuserid')).update(
@@ -572,7 +574,7 @@ def statistics():
     users = get_all_user(session)
     payrolls = get_user_payroll(session)
     for pay in payrolls:
-        totalPayroll = totalPayroll + pay['totalPayRate'] if pay['totalPayRate'] is not None else totalPayroll
+        totalPayroll = totalPayroll + (pay['basicSalary'] - pay['deduction'] + pay['overTime']) if pay['basicSalary'] is not None else totalPayroll
     totalAnnualleaves = len(users)*14
     annualDays,  sickDays= get_all_leave(session, now.strftime("%Y"))
     annualLeaves = round((annualDays/totalAnnualleaves)*100, 2) if annualDays != 0 else 0
@@ -591,7 +593,7 @@ def payrollStatistic():
     session = sessionFactory()
     payrolls = get_user_payroll(session)
     for pay in payrolls:
-        pay['totalPayRate'] = pay['totalPayRate'] if pay['totalPayRate'] is not None else 0
+        pay['totalPayRate'] = (pay['basicSalary'] - pay['deduction']) if pay['basicSalary'] is not None else 0
         json_ret.append({'firstname': pay['firstname'], 'payrollValues': pay['totalPayRate'], 'overtimeValues': pay['overTime']})
     session.close()
     return jsonify(json_ret)
