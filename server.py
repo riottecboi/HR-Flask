@@ -577,7 +577,11 @@ def statistics():
     annualDays,  sickDays= get_all_leave(session, now.strftime("%Y"))
     annualLeaves = round((annualDays/totalAnnualleaves)*100, 2) if annualDays != 0 else 0
     sickLeaves = round((sickDays / totalAnnualleaves) * 100, 2) if sickDays !=0 else 0
-    return render_template('dashboards.html', admin=current_user.is_admin, totalPayroll=totalPayroll, annualLeaves=annualLeaves, sickLeaves=sickLeaves, profile=profile, users=len(users))
+    admin = current_user.is_admin
+    userType = 'User'
+    if admin is True:
+        userType = 'Administrator'
+    return render_template('dashboards.html', admin=current_user.is_admin, userType=userType, totalPayroll=totalPayroll, annualLeaves=annualLeaves, sickLeaves=sickLeaves, profile=profile, users=len(users))
 
 
 @app.route("/payrollStatistic", methods=['GET'])
