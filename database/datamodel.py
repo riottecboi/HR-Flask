@@ -9,7 +9,7 @@ Base = declarative_base()
 class UserAuthentication(Base):
     __tablename__ = 'authentication'
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
-    username = Column(String(255))
+    username = Column(String(255), unique=True)
     password = Column(String(255))
     password_salt = Column(String(255))
     authenticated = Column(Boolean, default=False)
