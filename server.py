@@ -46,10 +46,7 @@ engine = create_engine(mysql_string, pool_pre_ping=True, echo=False,
 sessionFactory = sessionmaker(bind=engine)
 Base.metadata.create_all(engine)
 
-s3 = boto3.client('s3',
-                  aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'],
-                  aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY']
-                  )
+s3 = boto3.resource('s3')
 
 def last_day_of_month(any_day):
     # The day 28 exists in every month. 4 days later, it's always next month
@@ -150,11 +147,12 @@ def editprofile():
             if pr.filename != '':
                 filename = secure_filename(pr.filename)
                 pr.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                s3.upload_file(
-                    Filename=app.config['TMP_PATH'] + '/' + filename,
-                    Bucket=app.config['AWS_BUCKET'],
-                    Key='profile-{}'.format(form.editfirstname.data),
-                )
+                s3.Bucket("leekylie-bucket").put_object(Key='profile-{}'.format(form.editfirstname.data), Body=pr)
+                # s3.upload_file(
+                #     Filename=app.config['TMP_PATH'] + '/' + filename,
+                #     Bucket=app.config['AWS_BUCKET'],
+                #     Key='profile-{}'.format(form.editfirstname.data),
+                # )
                 profile = 'profile-{}'.format(form.editfirstname.data)
                 os.remove(app.config['TMP_PATH'] + '/' + filename)
                 # url = s3.generate_presigned_url(ClientMethod='get_object', Params={'Bucket': app.config['AWS_BUCKET'],'Key': filename})
@@ -163,11 +161,12 @@ def editprofile():
             if re.filename != '':
                 filename = secure_filename(re.filename)
                 re.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                s3.upload_file(
-                    Filename=app.config['TMP_PATH'] + '/' + filename,
-                    Bucket=app.config['AWS_BUCKET'],
-                    Key='resume-{}'.format(form.editfirstname.data),
-                )
+                s3.Bucket("leekylie-bucket").put_object(Key='resume-{}'.format(form.editfirstname.data), Body=re)
+                # s3.upload_file(
+                #     Filename=app.config['TMP_PATH'] + '/' + filename,
+                #     Bucket=app.config['AWS_BUCKET'],
+                #     Key='resume-{}'.format(form.editfirstname.data),
+                # )
                 resume = 'resume-{}'.format(form.editfirstname.data)
                 os.remove(app.config['TMP_PATH'] + '/' + filename)
 
@@ -175,11 +174,12 @@ def editprofile():
             if ce.filename != '':
                 filename = secure_filename(ce.filename)
                 ce.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                s3.upload_file(
-                    Filename=app.config['TMP_PATH'] + '/' + filename,
-                    Bucket=app.config['AWS_BUCKET'],
-                    Key='certificate-{}'.format(form.editfirstname.data),
-                )
+                s3.Bucket("leekylie-bucket").put_object(Key='certificate-{}'.format(form.editfirstname.data), Body=ce)
+                # s3.upload_file(
+                #     Filename=app.config['TMP_PATH'] + '/' + filename,
+                #     Bucket=app.config['AWS_BUCKET'],
+                #     Key='certificate-{}'.format(form.editfirstname.data),
+                # )
                 certificate = 'certificate-{}'.format(form.editfirstname.data)
                 os.remove(app.config['TMP_PATH'] + '/' + filename)
                 # url = s3.generate_presigned_url(ClientMethod='get_object', Params={'Bucket': app.config['AWS_BUCKET'],'Key': filename})
@@ -238,11 +238,12 @@ def employee():
             if pr.filename != '':
                 filename = secure_filename(pr.filename)
                 pr.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                s3.upload_file(
-                    Filename=app.config['TMP_PATH'] + '/' + filename,
-                    Bucket=app.config['AWS_BUCKET'],
-                    Key='profile-{}'.format(form.username.data),
-                )
+                s3.Bucket("leekylie-bucket").put_object(Key='profile-{}'.format(form.username.data), Body=pr)
+                # s3.upload_file(
+                #     Filename=app.config['TMP_PATH'] + '/' + filename,
+                #     Bucket=app.config['AWS_BUCKET'],
+                #     Key='profile-{}'.format(form.username.data),
+                # )
                 profile = 'profile-{}'.format(form.username.data)
                 os.remove(app.config['TMP_PATH'] + '/' + filename)
                 # url = s3.generate_presigned_url(ClientMethod='get_object', Params={'Bucket': app.config['AWS_BUCKET'],'Key': filename})
@@ -251,11 +252,12 @@ def employee():
             if re.filename != '':
                 filename = secure_filename(re.filename)
                 re.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                s3.upload_file(
-                    Filename=app.config['TMP_PATH'] + '/' + filename,
-                    Bucket=app.config['AWS_BUCKET'],
-                    Key='resume-{}'.format(form.username.data),
-                )
+                s3.Bucket("leekylie-bucket").put_object(Key='resume-{}'.format(form.username.data), Body=re)
+                # s3.upload_file(
+                #     Filename=app.config['TMP_PATH'] + '/' + filename,
+                #     Bucket=app.config['AWS_BUCKET'],
+                #     Key='resume-{}'.format(form.username.data),
+                # )
                 resume = 'resume-{}'.format(form.username.data)
                 os.remove(app.config['TMP_PATH'] + '/' + filename)
 
@@ -263,11 +265,12 @@ def employee():
             if ce.filename != '':
                 filename = secure_filename(ce.filename)
                 ce.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                s3.upload_file(
-                    Filename=app.config['TMP_PATH'] + '/' + filename,
-                    Bucket=app.config['AWS_BUCKET'],
-                    Key='certificate-{}'.format(form.username.data),
-                )
+                s3.Bucket("leekylie-bucket").put_object(Key='certificate-{}'.format(form.username.data), Body=ce)
+                # s3.upload_file(
+                #     Filename=app.config['TMP_PATH'] + '/' + filename,
+                #     Bucket=app.config['AWS_BUCKET'],
+                #     Key='certificate-{}'.format(form.username.data),
+                # )
                 certificate = 'certificate-{}'.format(form.username.data)
                 os.remove(app.config['TMP_PATH'] + '/' + filename)
 
