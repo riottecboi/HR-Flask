@@ -90,13 +90,6 @@ AmazonS3FullAccess
 ```
 
 
-## Demo
-
-http://employee-dashboard.spacey.tech/login
-
-
-
-
 ## Authors
 
 - [@riottecboi](https://github.com/riottecboi)
